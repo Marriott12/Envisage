@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="eng">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PH4MS84');</script>
+<!-- End Google Tag Manager -->
+<!-- Required meta tags -->
+<meta name="p:domain_verify" content="fae04643c428badd560b7ea27c96ff8a"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Envisage Technology Zambia was founded in 2019 and is located in Lusaka, Zambia. The company specialises in Application Development, Application Maintenance, Website Development, Business Branding, Digital Marketing, Graphic Designing. Call us today on +260 974 297 313/ +260 978 425 886, and we will happy to assist you.">
+<meta name="author" content="Marriott Gift Mumba">
+<meta property="og:url" content="http://envisagezm.com/" /> <!-- URL for website (link address) -->
+<meta property="og:type" content="website" /> <!-- type of site -->
+<meta property="og:title" content="Envisage Technology Zambia" /> <!-- title of site (title of share) -->
+<meta property="og:description" content="Envisage Technology Zambia was founded in 2019 and is located in Lusaka, Zambia. The company specialises in Application Development, Application Maintenance, Website Development, Business Branding, Digital Marketing, Graphic Designing. Call us today on +260 974 297 313/ +260 978 425 886, and we will happy to assist you." /> <!-- description of site (text which appears when sharing) -->
+<meta property="og:image"              content="http://envisagezm.com/assets/images/bg5.jpg" /> <!-- URL for preview image -->
+<meta name="keywords" content="Envisage Technology Zambia"/>
+<title>Privacy Policy | Envisage Technology Zambia</title>
+<!-- Template CSS -->
+<link rel="stylesheet" href="assets/css/style-starter.css">
+<!-- Template CSS -->
+<link href="//fonts.googleapis.com/css?family=Poppins:100,300,400,500,500i,600,700&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="/assets/images/favicon.png">
+<!-- Template CSS -->
+<script data-ad-client="ca-pub-6236778294039650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script src="https://www.googleoptimize.com/optimize.js?id=OPT-5LN24JG"></script>
+<!-- Start of HubSpot Embed Code -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/7816905.js"></script>
+<!-- End of HubSpot Embed Code -->
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-Ph5MS84"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!--/top-header-content-->
+<section class="w3l-top-header-content">
+  <div class="hny-top-menu">
+    <div class="top-hd">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="social-top col-lg-6">
+            <li><a href="https://web.facebook.com/envisagezm" target="blank"><span class="fa fa-facebook"></span></a></li>
+            <li><a href="https://www.linkedin.com/company/envisage-technology-zambia/" target="blank"><span class="fa fa-linkedin"></span></a></li>
+            <li><a href="https://www.pinterest.com/EnvisageZambia" target="blank"><span class="fa fa-pinterest"></span></a></li>
+          </div>
+          <div class="accounts col-lg-6">
+            <li class="top_li"><span class="fa fa-mobile"></span><a href="tel:+260 974 297 313">+260 974 297 313</a><a href="tel:+260 978 425 886">/ +260 978 425 886</a>
+            </li>
+
+            <li class="top_li"><span class="fa fa-envelope-o"></span><a href="mailto:info@envisagezm.com">Need help? Contact us via email</a>
+
+            </li>
+            <li class="top_li1"><span class="fa fa-map-marker"></span> Shop 101 Bauleni Market </li>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/nav-->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="http://envisagezm.com/"><label class="lohny"><img src="assets/images/favicon.png" alt="Envisage Technology Logo" height="42" width="42"></label>nvisage Technology Zambia<p><i>Creativity Beyond Imagination</i></p></a>
+        <!-- if logo is image enable this   
+        <a class="navbar-brand" href="#index.php">
+          <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+        </a> -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+          data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="about.php">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="services.php">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.php">Contact</a>
+            </li>
+            <!--<li class="nav-item">
+              <input type="text" placeholder="Search..">
+            </li>-->
+          </ul>
+            <script async src="https://cse.google.com/cse.js?cx=006872880371422177347:mf9jlxuknxo"></script>
+<div class="gcse-search"></div>
+
+        </div>
+      </div>
+    </nav>
+    <!--//nav-->
+  </div>
+
+</section>
+<!--//top-header-content-->
+    <section class="w3l-inner-page-main">
+      <div class="breadcrumb-infhny">
+        <div class="container">
+          <nav aria-label="breadcrumb">
+            <h2 class="hny-title text-center">Privacy Policy</h2>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="http://envisagezm.com/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </section>						
+	<!--/team-sec-->
+	<section class="w3l-team-main">
+		<div class="team py-5">
+			<div class="container py-lg-5">
+					<h4>Privacy Policy</h4>
+
+<p>Last updated: April 18, 2020</p>
+
+<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
+
+<h4>Interpretation and Definitions</h4>
+<h5>Interpretation</h5>
+<p>The words of which the initial letter is capitalized have meanings defined under the following conditions.</p>
+<p>The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>
+
+<h5>Definitions</h5>
+<p>For the purposes of this Privacy Policy:</p>
+<ul>
+    <li>
+        <p><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</p>
+          </li>
+    <li>
+        <p><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Envisage Technology Zambia, Bauleni Market Shop 101.</p>
+          </li>
+      <li><p><strong>Affiliate</strong> means an entity that controls, is controlled by or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</p></li>
+    <li><p><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</p></li>
+  <li><p><strong>Website</strong> refers to Envisage Technology Zambia, accessible from <a href="http://envisagezm.com/">Envisage Technology Zambia</a> </p></li>        <li><p><strong>Service</strong> refers to the Website.</p></li>
+      <li><p><strong>Country</strong> refers to: Zambia<p></li>
+    <li>
+        <p><strong>Service Provider</strong> means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.</p>
+          </li>
+    <li><p><strong>Third-party Social Media Service</strong> refers to any website or any social network website through which a User can log in or create an account to use the Service.</p></li>
+      <li>
+        <p><strong>Personal Data</strong> is any information that relates to an identified or identifiable individual.</p>
+                </li>
+  <li><p><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</p></li>      
+  <li><p><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</p></li>
+      </ul>
+
+<h4>Collecting and Using Your Personal Data</h4>
+<h5>Types of Data Collected</h5>
+
+<h4>Personal Data</h4>
+<p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p>
+<ul>
+  <li><p>Email address</p></li>  <li><p>First name and last name</p></li>          <li><p>Usage Data</p></li>
+</ul>
+
+
+<h4>Usage Data</h4>
+<p>Usage Data is collected automatically when using the Service.</p>
+<p>Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
+<p>When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.</p>
+<p>We may also collect information that Your browser sends whenever You visit our Service or when You access the Service by or through a mobile device.</p>
+
+
+
+    <h4>Tracking Technologies and Cookies</h4>
+    <p>We use Cookies and similar tracking technologies to track the activity on Our Service and store certain information. Tracking technologies used are beacons, tags, and scripts to collect and track information and to improve and analyze Our Service.</p>
+    <p>You can instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You may not be able to use some parts of our Service.</p>
+    <p>Cookies can be "Persistent" or "Session" Cookies. Persistent Cookies remain on your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close your web browser. Learn more about cookies in the <a href="https://www.privacypolicies.com/blog/cookies/">"What Are Cookies"</a> article.</p>
+    <p>We use both session and persistent Cookies for the purposes set out below:</p>
+    <ul>
+        <li>
+            <p><strong>Necessary / Essential Cookies</strong>
+            <p>Type: Session Cookies</p>
+            <p>Administered by: Us</p>
+            <p>Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services.</p>
+        </li>
+        <li>
+            <p><strong>Cookies Policy / Notice Acceptance Cookies</strong></p>
+            <p>Type: Persistent Cookies</p>
+            <p>Administered by: Us</p>
+            <p>Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</p>
+        </li>
+        <li>
+            <p><strong>Functionality Cookies</strong></p>
+            <p>Type: Persistent Cookies</p>
+            <p>Administered by: Us</p>
+            <p>Purpose: These Cookies allow us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website.</p>
+        </li>
+                <li>
+              <p><strong>Tracking and Performance Cookies</strong></p>
+              <p>Type: Persistent Cookies</p>
+              <p>Administered by: Third-Parties</p>
+              <p>Purpose: These Cookies are used to track information about traffic to the Website and how users use the Website. The information gathered via these Cookies may directly or indirectly identify you as an individual visitor. This is because the information collected is typically linked to a pseudonymous identifier associated with the device you use to access the Website. We may also use these Cookies to test new advertisements, pages, features or new functionality of the Website to see how our users react to them.</p>
+          </li>
+                      <li>
+              <p><strong>Targeting and Advertising Cookies</strong></p>
+              <p>Type: Persistent Cookies</p>
+              <p>Administered by: Third-Parties</p>
+              <p>Purpose: These Cookies track your browsing habits to enable Us to show advertising which is more likely to be of interest to You. These Cookies use information about your browsing history to group You with other users who have similar interests. Based on that information, and with Our permission, third party advertisers can place Cookies to enable them to show adverts which We think will be relevant to your interests while You are on third party websites.</p>
+          </li>
+          </ul>
+    <p>For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy.</p>
+
+<h5>Use of Your Personal Data</h5>
+<p>The Company may use Personal Data for the following purposes:</p>
+<ul>
+<li><p><strong>To provide and maintain our Service</strong>, including to monitor the usage of our Service.</p></li>
+    <li><p><strong>To manage Your Account:</strong> to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.</p></li>
+    <li><p><strong>For the performance of a contract:</strong> the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.</p></li>
+    <li><p><strong>To contact You:</strong> To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application's push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.</p></li>
+    <li><p><strong>To provide You</strong> with news, special offers and general information about other goods, services and events which we offer that are similar to those that you have already purchased or enquired about unless You have opted not to receive such information.</p></li>
+    <li><p><strong>To manage Your requests:</strong> To attend and manage Your requests to Us.</p></li></ul>
+
+<p>We may share your personal information in the following situations:</p>
+
+<ul>
+    <li><p><strong>With Service Providers:</strong> We may share Your personal information with Service Providers to monitor and analyze the use of our Service, to show advertisements to You to help support and maintain Our Service,  to contact You.</p></li>
+    <li><p>strong>For Business transfers:</strong> We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of our business to another company.</p></li>
+    <li><p><strong>With Affiliates:</strong> We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.</p></li>
+    <li><p><strong>With Business partners:</strong> We may share Your information with Our business partners to offer You certain products, services or promotions.</p></li>
+    <li><p><strong>With other users:</strong> when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside. If You interact with other users or register through a Third-Party Social Media Service, Your contacts on the Third-Party Social Media Service may see You name, profile, pictures and description of Your activity. Similarly, other users will be able to view descriptions of Your activity, communicate with You and view Your profile.</p></li>
+</ul>
+
+<h5>Retention of Your Personal Data</h5>
+<p>The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.</p>
+<p>The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer time periods.</p>
+
+<h5>Transfer of Your Personal Data</h5>
+<p>Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ than those from Your jurisdiction.</p>
+<p>Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.</p>
+<p>The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.</p>
+
+<h5>Disclosure of Your Personal Data</h5>
+<h4>Business Transactions</h4>
+<p>If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.</p>
+<h4>Law enforcement</h4>
+<p>Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).</p>
+<h4>Other legal requirements</h4>
+<p>The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:</p>
+<ul>
+    <li><p>Comply with a legal obligation</p></li>
+    <li><p>Protect and defend the rights or property of the Company</p></li>
+    <li><p>Prevent or investigate possible wrongdoing in connection with the Service</p></li>
+    <li><p>Protect the personal safety of Users of the Service or the public</p></li>
+    <li><p>Protect against legal liability</p></li>
+</ul>
+
+<h5>Security of Your Personal Data</h5>
+<p>The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially acceptable means to protect Your Personal Data, We cannot guarantee its absolute security.</p>
+
+    <h4>Detailed Information on the Processing of Your Personal Data</h4>
+    <p>Service Providers have access to Your Personal Data only to perform their tasks on Our behalf and are obligated not to disclose or use it for any other purpose.</p>
+
+          <h5>Analytics</h5>
+        <p>We may use third-party Service providers to monitor and analyze the use of our Service.</p>
+        <ul>
+                                                                                              <li>
+                  <p><strong>Google Analytics</strong></p>
+                  <p>Google Analytics is provided by Google Technologies Inc.</p>
+                  <p>For more information on what type of information Google Analytics collects, please visit the Terms of Use page of Google Analytics: <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a>
+						</p>
+              </li>
+                            </ul>
+  
+          <h5>Advertising</h5>
+        <p>We may use Service providers to show advertisements to You to help support and maintain Our Service.</p>
+        <ul>
+                                            <li>
+                  <p><strong>Google Ads</strong></p>
+                  <p>Google Ads is an advertising service provided by Google Technologies</p>
+                  <p>For more information about Google Ads, please visit their Privacy Policy: <a href="https://policies.google.com/technologies/ads">https://policies.google.com/technologies/ads</a>
+              </li>
+                                                                                                            </ul>
+  
+  
+  
+  
+  
+
+
+
+
+    <h4>Children's Privacy</h4>
+    <p>Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.</p>
+    <p>If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.</p>
+
+
+<h4>Links to Other Websites</h4>
+<p>Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.</p>
+<p>We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.</p>
+
+<h4>Changes to this Privacy Policy</h4>
+<p>We may update our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p>
+<p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.</p>
+<p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+
+<h4>Contact Us</h4>
+<p>If you have any questions about this Privacy Policy, You can contact us: <a href="mailto:info@envisagezm.com">info@envisagezm.com</a></p>
+				</div>
+			</div>
+	</section>
+	<!--//team-sec-->
+<section class="w3l-footer-22-main">
+    <!-- footer-22 -->
+    <?php require_once 'footer.php' ?>
