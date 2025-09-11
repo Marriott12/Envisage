@@ -16,7 +16,7 @@ $services = $db->fetchAll("SELECT * FROM services WHERE is_active = 1 ORDER BY s
 				<nav aria-label="breadcrumb">
 					<h2 class="hny-title text-center">Services</h2>
 					<ol class="breadcrumb mb-0">
-						<li class="breadcrumb-item"><a href="http://envisagezm.com/">Home</a></li>
+						<li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>">Home</a></li>
 						<li class="breadcrumb-item active" aria-current="page">Services</li>
 					</ol>
 				</nav>
@@ -53,14 +53,6 @@ $services = $db->fetchAll("SELECT * FROM services WHERE is_active = 1 ORDER BY s
 		</div>
 	</section>
 	<!-- //services-->
-	<!-- head -->
-
-	<head>
-		<link href="../bundles/css/style-starter.css" rel='stylesheet' type='text/css' /><!-- Style-CSS -->
-		<link href="//fonts.googleapis.com/css?family=Poppins:100,300,400,500,500i,600,700&display=swap"
-			rel="stylesheet">
-	</head>
-	<!-- //head -->
 	<div id="page">
 		<section class="features-4">
 			<div class="features4-block py-5">

@@ -18,7 +18,7 @@ $testimonials = $db->fetchAll("SELECT * FROM testimonials WHERE is_active = 1 OR
           <nav aria-label="breadcrumb">
             <h2 class="hny-title text-center">About Us</h2>
             <ol class="breadcrumb mb-0">
-              <li class="breadcrumb-item"><a href="http://envisagezm.com/">Home</a></li>
+              <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">About Us</li>
             </ol>
           </nav>

@@ -1,7 +1,7 @@
 # Configuration files with sensitive data
 config/config.php
 
-# Development and debug files
+# Development and debug files - DO NOT RESTORE
 debug_*.php
 test_*.php
 fix_*.php
@@ -13,9 +13,36 @@ ultimate_cleanup.bat
 cleanup.*
 final_cleanup.ps1
 fix_remote_database.php
+fix_appointments_table.php
+comprehensive_cleanup.*
 
-# Documentation files
+# Legacy files - DO NOT RESTORE
+header.php
+footer.php
+
+# Duplicate new files - DO NOT RESTORE  
+404_new.php
+ppolicy_new.php
+terms_new.php
+
+# Implementation docs - DO NOT RESTORE
+*_IMPLEMENTATION.md
+*_FIXES.md
+*_SUMMARY.md
+*_ANALYSIS.md
+*_FIX*.md
+*_WARNING*.md
+
+# Admin debug files - DO NOT RESTORE
+admin/debug_*.php
+admin/test_*.php
+
+# Setup directory - DO NOT RESTORE
+setup/
+
+# Documentation files (keep README.md only)
 *.md
+!README.md
 
 # Archive files
 *.zip
