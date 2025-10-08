@@ -66,4 +66,24 @@ class CartController extends Controller
         $cart->items()->delete();
         return response()->json(['message' => 'Cart cleared']);
     }
+
+    public function updateItem(Request $request, $cartId, $itemId)
+    {
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cart = Cart::find($cartId);
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
+
+        $item = $cart->items()->find($itemId);
+        if (!$item) {
+            return response()->json(['message' => 'Item not found'], 404);
+        }
+
+        $item->update(['quantity' => $validated['quantity']]);
+        return response()->json($item);
+    }
 }

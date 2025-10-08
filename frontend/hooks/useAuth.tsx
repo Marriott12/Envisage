@@ -13,6 +13,7 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
+  roles?: string[];
 }
 
 export interface LoginCredentials {
@@ -26,6 +27,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   password_confirmation: string;
+  terms?: boolean;
 }
 
 export interface AuthResponse {
@@ -50,7 +52,7 @@ export interface UseAuthReturn {
 }
 
 // API Base URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/envisage/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 // Create axios instance with default config
 const authApi = axios.create({
@@ -273,7 +275,14 @@ export const useAuth = (): UseAuthReturn => {
       const response: AxiosResponse<{ status: string; data: User }> = await authApi.get('/auth/user');
       
       if (response.data.status === 'success') {
-        const userData = response.data.data;
+        let userData = response.data.data;
+        // If roles are not present, try to fetch from /auth/roles endpoint (optional)
+        if (!userData.roles) {
+          try {
+            const rolesRes = await authApi.get('/auth/roles');
+            userData = { ...userData, roles: rolesRes.data.roles || [] };
+          } catch {}
+        }
         setUser(userData);
         return userData;
       }

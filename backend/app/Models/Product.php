@@ -16,5 +16,24 @@ class Product extends Model
         'image',
         'stock',
         'category',
+        'seller_id',
+        'featured',
+        'views',
+        'status',
     ];
+
+    protected $casts = [
+        'featured' => 'boolean',
+        'views' => 'integer',
+    ];
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

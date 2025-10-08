@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import ProductList from './components/ProductList';
 import Header from '@/components/Header';
 import { 
   ShieldCheckIcon, 
@@ -55,9 +58,47 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      
       <main>
         {/* Hero Section */}
+        <section className="bg-blue-50 py-16 text-center">
+          <h1 className="text-4xl font-extrabold mb-4">Welcome to Envisage Marketplace</h1>
+          <p className="text-lg mb-8">Buy, sell, and discover amazing products with secure payments and tracked shipping.</p>
+          <Link href="/products" className="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700">Shop Now</Link>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-12 bg-white">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center p-6 border rounded-lg shadow-sm">
+                <feature.icon className="h-10 w-10 text-blue-600 mb-2" />
+                <h3 className="font-bold text-lg mb-1">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Product List from backend */}
+        <div className="max-w-6xl mx-auto">
+          <ProductList />
+        </div>
+
+        {/* Categories Section */}
+        <section className="py-12">
+          <h2 className="text-2xl font-bold mb-6 text-center">Shop by Category</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {categories.map((cat, idx) => (
+              <div key={idx} className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+                <img src={cat.image} alt={cat.name} className="w-24 h-24 object-cover rounded mb-2" />
+                <div className="font-semibold">{cat.name}</div>
+                <div className="text-gray-500 text-sm">{cat.count}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Hero Section with Gradient */}
         <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white">
           <div className="container mx-auto px-4 py-20">
             <div className="text-center max-w-4xl mx-auto">

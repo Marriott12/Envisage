@@ -10,10 +10,12 @@ import {
   UserIcon,
   BellIcon,
 } from '@heroicons/react/24/outline';
-import { useAuth } from '@/hooks/useAuth';
-import Header from '@/components/Header';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '../../hooks/useAuth';
+import Header from '../../components/Header';
+import ProtectedRoute from '../../components/ProtectedRoute';
+import dynamic from 'next/dynamic';
 
+const RolePermissionManager = dynamic(() => import('../../components/RolePermissionManager'), { ssr: false });
 const stats = [
   { name: 'Total Orders', value: '12', icon: ShoppingBagIcon, change: '+2 this week' },
   { name: 'Favorites', value: '24', icon: HeartIcon, change: '+4 new' },
@@ -99,6 +101,8 @@ export default function DashboardPage() {
               </div>
             </motion.div>
           </div>
+          {/* Role/Permission Management (Admin only) */}
+          <RolePermissionManager />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

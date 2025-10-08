@@ -102,8 +102,8 @@ export default function ListingCard({
 
             {/* Condition Badge */}
             <div className="absolute top-2 right-2">
-              <span className={cn('badge', getConditionBadgeColor(listing.condition_type))}>
-                {capitalizeFirst(listing.condition_type.replace('_', ' '))}
+              <span className={cn('badge', getConditionBadgeColor(listing.condition_type || ''))}>
+                {capitalizeFirst((listing.condition_type || 'new').replace('_', ' '))}
               </span>
             </div>
 

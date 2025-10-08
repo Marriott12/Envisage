@@ -99,6 +99,34 @@ export function getConditionBadgeColor(condition: string): string {
   }
 }
 
+export function getConditionColor(condition: string): string {
+  switch (condition.toLowerCase()) {
+    case 'new':
+      return 'bg-green-100 text-green-800';
+    case 'like_new':
+      return 'bg-blue-100 text-blue-800';
+    case 'good':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'fair':
+      return 'bg-orange-100 text-orange-800';
+    case 'poor':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+}
+
+export function getConditionLabel(condition: string): string {
+  const labels: Record<string, string> = {
+    new: 'New',
+    like_new: 'Like New',
+    good: 'Good',
+    fair: 'Fair',
+    poor: 'Poor',
+  };
+  return labels[condition.toLowerCase()] || capitalizeFirst(condition);
+}
+
 export function getStatusBadgeColor(status: string): string {
   switch (status.toLowerCase()) {
     case 'active':

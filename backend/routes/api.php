@@ -69,4 +69,47 @@ Route::get('/payments/{id}', [PaymentController::class, 'show']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-// ...existing code...
+
+// Seller routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/seller/listings', [\App\Http\Controllers\SellerController::class, 'getListings']);
+    Route::get('/seller/analytics', [\App\Http\Controllers\SellerController::class, 'getAnalytics']);
+});
+
+// Review routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/products/{productId}/reviews', [\App\Http\Controllers\ReviewController::class, 'store']);
+    Route::get('/products/{productId}/reviews', [\App\Http\Controllers\ReviewController::class, 'index']);
+});
+
+// Notification routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+});
+
+// Admin routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin/overview', [\App\Http\Controllers\AdminController::class, 'getOverview']);
+    Route::get('/admin/users', [\App\Http\Controllers\AdminController::class, 'getUsers']);
+    Route::put('/admin/users/{id}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
+});
+
+// Profile routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/user', function (Request $request) {
+        $user = $request->user();
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+        ]);
+        $user->update($validated);
+        return response()->json($user);
+    });
+});
+
+// Cart item routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/cart/{cartId}/item/{itemId}', [\App\Http\Controllers\CartController::class, 'updateItem']);
+    Route::delete('/cart/{cartId}/item/{itemId}', [\App\Http\Controllers\CartController::class, 'removeItem']);
+});

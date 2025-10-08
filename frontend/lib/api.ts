@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 // Create axios instance
 const api = axios.create({
@@ -54,15 +54,19 @@ export interface Listing {
   price: number;
   currency: string;
   category: string;
-  condition_type: string;
-  location: string;
+  condition_type?: string;
+  condition?: string;
+  location?: string;
+  seller_location?: string;
   seller_id: number;
   seller_name: string;
-  seller_email: string;
+  seller_email?: string;
   seller_rating?: number;
+  seller_verified?: boolean;
   images: string[];
   status: 'active' | 'sold' | 'inactive';
   views: number;
+  original_price?: number;
   created_at: string;
   updated_at: string;
 }
@@ -128,81 +132,66 @@ export interface OrderResponse {
 
 // API functions
 export const marketplaceApi = {
-  // Get listings with filters and pagination
+  // Get products with filters and pagination
   getListings: async (params: {
     page?: number;
     per_page?: number;
     category?: string;
-    condition?: string;
     min_price?: number;
     max_price?: number;
-    location?: string;
     search?: string;
     sort?: string;
   } = {}): Promise<ListingsResponse> => {
     const queryParams = new URLSearchParams();
-    
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== '') {
         queryParams.append(key, value.toString());
       }
     });
-
-    return api.get(`/marketplace/listings?${queryParams.toString()}`);
+    return api.get(`/products?${queryParams.toString()}`);
   },
 
-  // Get single listing details
+  // Get single product details
   getListing: async (id: number): Promise<ListingDetailResponse> => {
-    return api.get(`/marketplace/listing/${id}`);
+    return api.get(`/products/${id}`);
   },
 
-  // Create new listing
+  // Create new product
   createListing: async (listingData: Partial<Listing>): Promise<any> => {
-    return api.post('/marketplace/listing', listingData);
+    return api.post('/products', listingData);
   },
 
-  // Update listing
+  // Update product
   updateListing: async (id: number, listingData: Partial<Listing>): Promise<any> => {
-    return api.put(`/marketplace/listing/${id}`, listingData);
+    return api.put(`/products/${id}`, listingData);
   },
 
-  // Delete listing
+  // Delete product
   deleteListing: async (id: number): Promise<any> => {
-    return api.delete(`/marketplace/listing/${id}`);
+    return api.delete(`/products/${id}`);
   },
 
-  // Buy listing (create order)
-  buyListing: async (id: number, orderData: OrderData): Promise<OrderResponse> => {
-    return api.post(`/marketplace/listing/${id}/buy`, orderData);
-  },
-
-  // Get categories
-  getCategories: async (): Promise<any> => {
-    return api.get('/marketplace/categories');
-  },
-
-  // Get user's listings
-  getMyListings: async (params: {
-    page?: number;
-    per_page?: number;
-    status?: string;
-  } = {}): Promise<ListingsResponse> => {
-    const queryParams = new URLSearchParams();
-    
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== '') {
-        queryParams.append(key, value.toString());
-      }
-    });
-
-    return api.get(`/marketplace/my-listings?${queryParams.toString()}`);
-  },
-
-  // Search listings
+  // Search products
   searchListings: async (query: string, filters: any = {}): Promise<ListingsResponse> => {
-    return api.get('/marketplace/search', {
-      params: { q: query, ...filters }
+    return api.get('/products', {
+      params: { search: query, ...filters }
     });
+  },
+
+  // Buy product (create order)
+  buyListing: async (productId: number, orderData: OrderData): Promise<OrderResponse> => {
+    // The backend expects: user_id, status, total, shipping_address, billing_address, payment_method, payment_status, items
+    // We'll send a single item order for the selected product
+    const payload = {
+      ...orderData,
+      items: [
+        {
+          product_id: productId,
+          quantity: 1,
+        },
+      ],
+    };
+    return api.post('/orders', payload);
   },
 };
 
@@ -231,21 +220,25 @@ export const authApi = {
 
 // Payment API functions
 export const paymentApi = {
+  // Create a payment record (for manual or external payment flows)
   createPayment: async (paymentData: any): Promise<any> => {
-    return api.post('/payments/create', paymentData);
+    return api.post('/payments', paymentData);
   },
 
+  // Get payment details
   getPayment: async (id: number): Promise<any> => {
     return api.get(`/payments/${id}`);
   },
 
-  verifyPayment: async (id: number): Promise<any> => {
-    return api.get(`/payments/${id}/verify`);
+  // Update payment (e.g., mark as paid/verified)
+  updatePayment: async (id: number, data: any): Promise<any> => {
+    return api.put(`/payments/${id}`, data);
   },
 
+  // List all payments for the authenticated user
   getMyPayments: async (params: any = {}): Promise<any> => {
     const queryParams = new URLSearchParams(params);
-    return api.get(`/payments/my-payments?${queryParams.toString()}`);
+    return api.get(`/payments?${queryParams.toString()}`);
   },
 };
 
