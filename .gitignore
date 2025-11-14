@@ -1,0 +1,84 @@
+# Configuration files with sensitive data
+config/config.php
+
+# Development and debug files - DO NOT RESTORE
+debug_*.php
+test_*.php
+fix_*.php
+check_*.php
+create_*.php
+add_*.php
+recreate_*.php
+ultimate_cleanup.bat
+cleanup.*
+final_cleanup.ps1
+fix_remote_database.php
+fix_appointments_table.php
+comprehensive_cleanup.*
+
+# Legacy files - DO NOT RESTORE
+header.php
+footer.php
+
+# Duplicate new files - DO NOT RESTORE  
+404_new.php
+ppolicy_new.php
+terms_new.php
+
+# Implementation docs - DO NOT RESTORE
+*_IMPLEMENTATION.md
+*_FIXES.md
+*_SUMMARY.md
+*_ANALYSIS.md
+*_FIX*.md
+*_WARNING*.md
+
+# Admin debug files - DO NOT RESTORE
+admin/debug_*.php
+admin/test_*.php
+
+# Setup directory - DO NOT RESTORE
+setup/
+
+# Documentation files (keep README.md only)
+*.md
+!README.md
+
+# Archive files
+*.zip
+*.pdf
+
+# Old/backup files
+*_new.php
+*_backup.*
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Node modules (if any)
+node_modules/
+package-lock.json
+
+# Uploads directory (user uploads)
+uploads/
+assets/uploads/
+
+# Cache files
+cache/
+tmp/
