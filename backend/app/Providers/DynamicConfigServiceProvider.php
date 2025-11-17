@@ -27,9 +27,14 @@ class DynamicConfigServiceProvider extends ServiceProvider
     public function boot()
     {
         // Only load settings if database is available and settings table exists
-        if (Schema::hasTable('settings')) {
-            $this->loadMailSettings();
-            $this->loadPaymentSettings();
+        try {
+            if (Schema::hasTable('settings')) {
+                $this->loadMailSettings();
+                $this->loadPaymentSettings();
+            }
+        } catch (\Exception $e) {
+            // Silently fail if database connection is not available
+            // This allows config:cache to work even when database is not configured
         }
     }
 
