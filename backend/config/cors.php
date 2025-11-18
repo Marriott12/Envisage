@@ -22,10 +22,13 @@ return [
     'allowed_origins' => [
         'http://localhost:3000',
         'http://localhost:3001',
+        'https://envisage-ten.vercel.app',
         env('FRONTEND_URL', 'http://localhost:3000'),
     ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '/^https:\/\/.*\.vercel\.app$/', // Allow all Vercel preview deployments
+    ],
 
     'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
 
