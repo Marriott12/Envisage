@@ -82,3 +82,4 @@ assets/uploads/
 # Cache files
 cache/
 tmp/
+.vercel

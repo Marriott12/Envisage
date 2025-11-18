@@ -12,6 +12,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Api\SocialAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,12 @@ Route::get('/test', function() {
 Route::middleware('throttle:5,1')->group(function() {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // Social Authentication
+    Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook']);
+    Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback']);
+    Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle']);
+    Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 });
 
 // Public product browsing (rate limited to prevent scraping)
