@@ -33,17 +33,6 @@ terms_new.php
 *_FIX*.md
 *_WARNING*.md
 
-# Admin debug files - DO NOT RESTORE
-admin/debug_*.php
-admin/test_*.php
-
-# Setup directory - DO NOT RESTORE
-setup/
-
-# Documentation files (keep README.md only)
-*.md
-!README.md
-
 # Archive files
 *.zip
 *.pdf
