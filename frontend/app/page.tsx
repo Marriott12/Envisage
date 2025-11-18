@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import ProductList from './components/ProductList';
+// import ProductList from './components/ProductList'; // Component removed
 import Header from '@/components/Header';
 import { 
   ShieldCheckIcon, 
@@ -80,9 +80,9 @@ export default function HomePage() {
         </section>
 
         {/* Product List from backend */}
-        <div className="max-w-6xl mx-auto">
+        {/* <div className="max-w-6xl mx-auto">
           <ProductList />
-        </div>
+        </div> */}
 
         {/* Categories Section */}
         <section className="py-12">

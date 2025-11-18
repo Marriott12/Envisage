@@ -49,7 +49,7 @@ function ListingsContent() {
       console.log('Listings API response:', response);
       
       // Handle different response formats
-      let listingsData = [];
+      let listingsData: any[] = [];
       if (response.status === 'success' && response.data) {
         listingsData = Array.isArray(response.data) ? response.data : [];
       } else if (Array.isArray(response.data)) {

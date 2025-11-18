@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google'; // Temporarily disabled due to build issues
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+// const inter = Inter({ subsets: ['latin'] }); // Disabled
 
 export const metadata: Metadata = {
   title: 'Envisage Marketplace',
@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="font-sans">{/* Changed from {inter.className} */}
         {children}
         <Toaster
           position="top-right"

@@ -94,7 +94,7 @@ export default function ListingDetailPage() {
       price: listing.price,
       currency: listing.currency,
       image: listing.images?.[0] || '',
-      seller_name: listing.seller_name,
+      seller_name: listing.seller_name || 'Unknown Seller',
     });
     
     toast.success('Added to cart!');

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { marketplaceApi } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
