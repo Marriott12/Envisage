@@ -31,8 +31,9 @@ export default function ProtectedRoute({
 
       // Check role requirements
       if (requiredRoles.length > 0 && user) {
-        const userRoles = (user.roles as string[]) || [];
-        const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
+        // Backend returns 'role' as a string, not 'roles' array
+        const userRole = (user as any).role || '';
+        const hasRequiredRole = requiredRoles.includes(userRole);
         
         if (!hasRequiredRole) {
           // User doesn't have required role - redirect to marketplace or home
@@ -64,8 +65,9 @@ export default function ProtectedRoute({
 
   // Check role requirements
   if (requiredRoles.length > 0 && user) {
-    const userRoles = (user.roles as string[]) || [];
-    const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
+    // Backend returns 'role' as a string, not 'roles' array
+    const userRole = (user as any).role || '';
+    const hasRequiredRole = requiredRoles.includes(userRole);
     
     if (!hasRequiredRole) {
       return (

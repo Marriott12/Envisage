@@ -249,7 +249,7 @@ function DashboardContent() {
 
 export default function DashboardPage() {
   return (
-    <ProtectedRoute requiredRoles={['admin', 'seller']}>
+    <ProtectedRoute>
       <DashboardContent />
     </ProtectedRoute>
   );

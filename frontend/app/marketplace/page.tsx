@@ -85,8 +85,18 @@ export default function MarketplacePage() {
       const response = await marketplaceApi.getListings(cleanParams);
       
       if (response.status === 'success') {
-        setListings(response.data.listings || response.data);
-        setTotalCount(response.data.pagination?.total || response.data.listings.length);
+        // Transform backend data to match frontend expectations
+        const transformedListings = (response.data.listings || response.data || []).map((product: any) => ({
+          ...product,
+          price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+          currency: product.currency || 'ZMW',
+          images: product.images_urls || product.images || [],
+          seller_name: product.seller?.name || product.seller_name,
+          seller_email: product.seller?.email || product.seller_email,
+        }));
+        
+        setListings(transformedListings);
+        setTotalCount(response.data.pagination?.total || transformedListings.length);
       } else {
         setError(response.message || 'Failed to load listings');
       }

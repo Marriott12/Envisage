@@ -24,7 +24,8 @@ const RolePermissionManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Only allow admins
-  if (!user || !user.roles?.includes('admin')) {
+  const userRole = (user as any)?.role || '';
+  if (!user || userRole !== 'admin') {
     return null;
   }
 

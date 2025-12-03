@@ -1,0 +1,154 @@
+================================================================================
+ENVISAGE MARKETPLACE - QUICK DEPLOYMENT GUIDE
+================================================================================
+
+🚀 DEPLOYMENT CHECKLIST
+================================================================================
+
+STEP 1: BUILD & TEST LOCALLY
+-----------------------------
+```powershell
+cd c:\wamp64\www\Envisage\frontend
+npm run build
+```
+
+Expected: No errors, successful build
+
+STEP 2: CONFIGURE ENVIRONMENT VARIABLES
+----------------------------------------
+Production .env.production file:
+
+```
+NEXT_PUBLIC_API_URL=https://envisagezm.com/api
+NEXT_PUBLIC_STRIPE_KEY=pk_live_xxxxx
+NEXT_PUBLIC_FLUTTERWAVE_KEY=FLWPUBK-xxxxx
+```
+
+STEP 3: CONFIGURE OAUTH APPS
+-----------------------------
+Google OAuth:
+1. Go to: https://console.cloud.google.com
+2. Create OAuth 2.0 credentials
+3. Authorized redirect URIs: https://envisagezm.com/api/auth/google/callback
+4. Add credentials to backend .env:
+   GOOGLE_CLIENT_ID=xxxxx
+   GOOGLE_CLIENT_SECRET=xxxxx
+
+Facebook OAuth:
+1. Go to: https://developers.facebook.com
+2. Create app, get App ID and Secret
+3. Add redirect URI: https://envisagezm.com/api/auth/facebook/callback
+4. Add credentials to backend .env:
+   FACEBOOK_CLIENT_ID=xxxxx
+   FACEBOOK_CLIENT_SECRET=xxxxx
+
+STEP 4: DEPLOY TO VERCEL
+-------------------------
+```powershell
+cd c:\wamp64\www\Envisage\frontend
+git add .
+git commit -m "Complete system implementation: checkout, notifications, social login, error handling"
+git push origin main
+```
+
+Vercel will auto-deploy. Add environment variables in Vercel dashboard.
+
+STEP 5: VERIFY DEPLOYMENT
+--------------------------
+Test these URLs:
+✓ https://envisage-ten.vercel.app/
+✓ https://envisage-ten.vercel.app/marketplace
+✓ https://envisage-ten.vercel.app/checkout (after adding to cart)
+✓ https://envisage-ten.vercel.app/notifications
+✓ https://envisage-ten.vercel.app/login
+✓ https://envisage-ten.vercel.app/register
+✓ https://envisage-ten.vercel.app/dashboard
+
+STEP 6: TEST CRITICAL FLOWS
+----------------------------
+[ ] Register new account
+[ ] Login with email/password
+[ ] Login with Google (if OAuth configured)
+[ ] Browse marketplace
+[ ] Add product to cart
+[ ] Complete checkout process
+[ ] View notifications
+[ ] Access dashboard
+[ ] Test 404 page (visit invalid URL)
+
+
+================================================================================
+📋 FILES CHANGED IN THIS IMPLEMENTATION
+================================================================================
+
+NEW FILES (4):
+✓ frontend/app/checkout/page.tsx
+✓ frontend/app/notifications/page.tsx
+✓ frontend/app/not-found.tsx
+✓ frontend/app/error.tsx
+
+MODIFIED FILES (8):
+✓ frontend/app/marketplace/page.tsx
+✓ frontend/app/marketplace/[id]/page.tsx
+✓ frontend/app/login/page.tsx
+✓ frontend/app/register/page.tsx
+✓ frontend/app/dashboard/page.tsx
+✓ frontend/app/layout.tsx
+✓ frontend/components/ProtectedRoute.tsx
+✓ frontend/components/RolePermissionManager.tsx
+
+
+================================================================================
+🔑 KEY FIXES APPLIED
+================================================================================
+
+1. ✅ Checkout page created - Full multi-step flow
+2. ✅ Notifications page created - API integrated
+3. ✅ Social login buttons - Google & Facebook OAuth
+4. ✅ Dashboard access - Open to all users
+5. ✅ API role consistency - Fixed user.role handling
+6. ✅ Marketplace data - Images and price transformation
+7. ✅ Error boundaries - App-wide protection
+8. ✅ 404 page - Custom not found page
+
+
+================================================================================
+⚠️ POST-DEPLOYMENT MONITORING
+================================================================================
+
+Check for errors in:
+- Vercel deployment logs
+- Browser console (F12)
+- Network tab for failed API calls
+- Error boundary triggers
+
+Monitor:
+- User registration success rate
+- Checkout completion rate
+- API response times
+- Error frequency
+
+
+================================================================================
+📞 QUICK TROUBLESHOOTING
+================================================================================
+
+ISSUE: Social login buttons don't work
+FIX: Configure OAuth apps and add credentials to backend .env
+
+ISSUE: Images not showing in marketplace
+FIX: Ensure backend storage is linked: php artisan storage:link
+
+ISSUE: Checkout fails
+FIX: Check payment provider credentials in .env
+
+ISSUE: 500 errors on API calls
+FIX: Check backend logs, ensure database is accessible
+
+ISSUE: Build errors
+FIX: Run npm install, check TypeScript errors
+
+
+================================================================================
+END OF QUICK DEPLOYMENT GUIDE
+================================================================================

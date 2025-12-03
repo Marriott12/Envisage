@@ -222,6 +222,12 @@ function OrdersContent() {
 
                     {/* Order Actions */}
                     <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-end space-x-4">
+                      <Link
+                        href={`/orders/${order.id}/tracking`}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      >
+                        Track Order
+                      </Link>
                       {order.status === 'Delivered' && (
                         <button className="text-primary-600 hover:text-primary-700 font-medium text-sm">
                           Leave Review

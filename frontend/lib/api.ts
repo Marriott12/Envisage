@@ -69,6 +69,9 @@ export interface Listing {
   seller_rating?: number;
   seller_verified?: boolean;
   images: string[];
+  images_urls?: string[];
+  rating?: number;
+  reviews_count?: number;
   status: 'active' | 'sold' | 'inactive';
   views: number;
   original_price?: number;

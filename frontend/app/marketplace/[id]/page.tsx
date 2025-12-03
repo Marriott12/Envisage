@@ -26,6 +26,8 @@ import { marketplaceApi, type Listing } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useCartStore, useAuthStore } from '@/lib/store';
 import CheckoutModal from '@/components/CheckoutModal';
+import ProductReviews from '@/components/ProductReviews';
+import RecentlyViewedProducts, { addToRecentlyViewed } from '@/components/RecentlyViewedProducts';
 import Header from '@/components/Header';
 
 export default function ListingDetailPage() {
@@ -57,7 +59,27 @@ export default function ListingDetailPage() {
       const response = await marketplaceApi.getListing(parseInt(listingId));
       
       if (response.status === 'success') {
-        setListing(response.data.listing || response.data);
+        // Transform backend data to match frontend expectations
+        const product = response.data.listing || response.data;
+        const transformedListing = {
+          ...product,
+          price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+          currency: product.currency || 'ZMW',
+          images: product.images_urls || product.images || [],
+          seller_name: product.seller?.name || product.seller_name,
+          seller_email: product.seller?.email || product.seller_email,
+        };
+        setListing(transformedListing);
+        
+        // Add to recently viewed
+        addToRecentlyViewed({
+          id: transformedListing.id,
+          title: transformedListing.title,
+          price: transformedListing.price,
+          currency: transformedListing.currency,
+          image: transformedListing.images[0],
+          rating: transformedListing.rating,
+        });
       } else {
         setError(response.message || 'Failed to load listing');
       }
@@ -470,6 +492,20 @@ export default function ListingDetailPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Recently Viewed Products */}
+          <div className="mt-12">
+            <RecentlyViewedProducts maxItems={6} />
+          </div>
+
+          {/* Product Reviews Section */}
+          <div className="mt-12">
+            <ProductReviews 
+              productId={parseInt(listingId)} 
+              canReview={isAuthenticated}
+              onReviewSubmitted={fetchListing}
+            />
           </div>
         </div>
 

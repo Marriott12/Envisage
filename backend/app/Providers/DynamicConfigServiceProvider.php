@@ -6,6 +6,7 @@ use App\Models\Setting;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class DynamicConfigServiceProvider extends ServiceProvider
 {
@@ -62,7 +63,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
             }
         } catch (\Exception $e) {
             // If settings can't be loaded, use default config
-            \Log::warning('Could not load mail settings from database: ' . $e->getMessage());
+            Log::warning('Could not load mail settings from database: ' . $e->getMessage());
         }
     }
 
@@ -86,7 +87,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 Config::set('services.stripe.webhook_secret', $webhookSecret);
             }
         } catch (\Exception $e) {
-            \Log::warning('Could not load payment settings from database: ' . $e->getMessage());
+            Log::warning('Could not load payment settings from database: ' . $e->getMessage());
         }
     }
 }

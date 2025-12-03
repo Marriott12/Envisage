@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 // import { Inter } from 'next/font/google'; // Temporarily disabled due to build issues
 import { Toaster } from 'react-hot-toast';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import './globals.css';
 
 // const inter = Inter({ subsets: ['latin'] }); // Disabled
@@ -21,31 +22,33 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans">{/* Changed from {inter.className} */}
-        {children}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
+        <ErrorBoundary>
+          {children}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
               },
-            },
-            error: {
-              duration: 5000,
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
               },
-            },
-          }}
-        />
+              error: {
+                duration: 5000,
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
+        </ErrorBoundary>
       </body>
     </html>
   );

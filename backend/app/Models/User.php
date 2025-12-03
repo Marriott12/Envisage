@@ -131,5 +131,21 @@ class User extends Authenticatable
     {
         return $this->role === 'customer';
     }
+
+    // Profile enhancement relationships
+    public function notificationPreferences()
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
+    public function shippingAddresses()
+    {
+        return $this->hasMany(ShippingAddress::class);
+    }
+
+    public function userSessions()
+    {
+        return $this->hasMany(UserSession::class);
+    }
 }
 

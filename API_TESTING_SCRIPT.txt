@@ -1,0 +1,685 @@
+================================================================================
+API ENDPOINT TESTING SCRIPT
+================================================================================
+Date: December 3, 2025
+Purpose: Test all API endpoints used by Envisage frontend
+Base URL: https://envisagezm.com/api
+
+================================================================================
+🔑 AUTHENTICATION ENDPOINTS
+================================================================================
+
+---[ 1. POST /register ]-------------------------------------------------------
+Purpose: Create new user account
+Test with PowerShell:
+
+```powershell
+$body = @{
+    name = "Test User"
+    email = "test@example.com"
+    password = "Password123!"
+    password_confirmation = "Password123!"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/register" `
+    -Method POST `
+    -Body $body `
+    -ContentType "application/json"
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "access_token": "token_string",
+  "token_type": "Bearer",
+  "user": {
+    "id": 1,
+    "name": "Test User",
+    "email": "test@example.com",
+    "role": "customer"
+  }
+}
+```
+
+---[ 2. POST /login ]-----------------------------------------------------------
+Purpose: Authenticate user
+Test with PowerShell:
+
+```powershell
+$body = @{
+    email = "test@example.com"
+    password = "Password123!"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/login" `
+    -Method POST `
+    -Body $body `
+    -ContentType "application/json"
+
+# Save token for later tests
+$token = $response.access_token
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+    "Accept" = "application/json"
+}
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "access_token": "token_string",
+  "token_type": "Bearer",
+  "user": {
+    "id": 1,
+    "name": "Test User",
+    "email": "test@example.com",
+    "role": "customer"
+  }
+}
+```
+
+---[ 3. GET /user ]-------------------------------------------------------------
+Purpose: Get authenticated user info
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/user" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "id": 1,
+  "name": "Test User",
+  "email": "test@example.com",
+  "role": "customer",
+  "created_at": "2024-01-01T00:00:00.000000Z",
+  "updated_at": "2024-01-01T00:00:00.000000Z"
+}
+```
+
+---[ 4. POST /logout ]----------------------------------------------------------
+Purpose: Logout user (invalidate token)
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/logout" `
+    -Method POST `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+
+================================================================================
+📦 PRODUCTS/MARKETPLACE ENDPOINTS
+================================================================================
+
+---[ 5. GET /products ]---------------------------------------------------------
+Purpose: List all products with filters
+Test with PowerShell:
+
+```powershell
+# Basic list
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products"
+
+# With search
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products?search=laptop"
+
+# With category filter
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products?category=electronics"
+
+# With price range
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products?min_price=100&max_price=500"
+
+# With sorting
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products?sort=price_low"
+
+# With pagination
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products?page=2&per_page=12"
+
+# Combined filters
+$url = "https://envisagezm.com/api/products?search=phone&category=electronics&min_price=200&max_price=1000&sort=price_low&page=1&limit=12"
+$response = Invoke-RestMethod -Uri $url
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "status": "success",
+  "message": "Products retrieved successfully",
+  "data": {
+    "listings": [
+      {
+        "id": 1,
+        "title": "Product Name",
+        "description": "Product description",
+        "price": "99.99",
+        "stock": 10,
+        "images": ["products/img1.jpg"],
+        "images_urls": ["https://envisagezm.com/storage/products/img1.jpg"],
+        "status": "active",
+        "condition": "new",
+        "views": 150,
+        "seller": {
+          "id": 5,
+          "name": "Seller Name",
+          "email": "seller@example.com"
+        },
+        "category": {
+          "id": 3,
+          "name": "Electronics"
+        },
+        "created_at": "2024-01-01T00:00:00.000000Z"
+      }
+    ],
+    "pagination": {
+      "total": 100,
+      "per_page": 12,
+      "current_page": 1,
+      "last_page": 9,
+      "has_more": true
+    }
+  }
+}
+```
+
+---[ 6. GET /products/{id} ]----------------------------------------------------
+Purpose: Get single product details
+Test with PowerShell:
+
+```powershell
+$productId = 1
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products/$productId"
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "status": "success",
+  "message": "Product retrieved successfully",
+  "data": {
+    "listing": {
+      "id": 1,
+      "title": "Product Name",
+      "description": "Detailed description...",
+      "price": "99.99",
+      "stock": 10,
+      "images_urls": ["https://envisagezm.com/storage/products/img1.jpg"],
+      "seller": { "id": 5, "name": "Seller Name", "email": "seller@example.com" },
+      "category": { "id": 3, "name": "Electronics" }
+    }
+  }
+}
+```
+
+---[ 7. POST /products ]--------------------------------------------------------
+Purpose: Create new product (Seller/Admin only)
+Test with PowerShell:
+
+```powershell
+$body = @{
+    title = "New Product"
+    description = "Product description"
+    price = 99.99
+    stock = 10
+    category_id = 1
+    condition = "new"
+    status = "active"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products" `
+    -Method POST `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+Expected Response:
+```json
+{
+  "status": "success",
+  "message": "Product created successfully",
+  "data": {
+    "product": { "id": 10, "title": "New Product", ... }
+  }
+}
+```
+
+---[ 8. PUT /products/{id} ]----------------------------------------------------
+Purpose: Update existing product (Seller/Admin only)
+Test with PowerShell:
+
+```powershell
+$productId = 10
+$body = @{
+    title = "Updated Product Title"
+    price = 89.99
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products/$productId" `
+    -Method PUT `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 9. DELETE /products/{id} ]-------------------------------------------------
+Purpose: Delete product (Seller/Admin only)
+Test with PowerShell:
+
+```powershell
+$productId = 10
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/products/$productId" `
+    -Method DELETE `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+🛒 CART ENDPOINTS
+================================================================================
+
+---[ 10. GET /cart ]------------------------------------------------------------
+Purpose: Get user's cart items
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/cart" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 11. POST /cart/add ]-------------------------------------------------------
+Purpose: Add item to cart
+Test with PowerShell:
+
+```powershell
+$body = @{
+    product_id = 1
+    quantity = 2
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/cart/add" `
+    -Method POST `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 12. PUT /cart/update/{id} ]------------------------------------------------
+Purpose: Update cart item quantity
+Test with PowerShell:
+
+```powershell
+$cartItemId = 5
+$body = @{
+    quantity = 3
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/cart/update/$cartItemId" `
+    -Method PUT `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 13. DELETE /cart/remove/{id} ]---------------------------------------------
+Purpose: Remove item from cart
+Test with PowerShell:
+
+```powershell
+$cartItemId = 5
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/cart/remove/$cartItemId" `
+    -Method DELETE `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+📋 ORDER ENDPOINTS
+================================================================================
+
+---[ 14. GET /orders ]----------------------------------------------------------
+Purpose: Get user's orders
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/orders" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 15. GET /orders/{id} ]-----------------------------------------------------
+Purpose: Get single order details
+Test with PowerShell:
+
+```powershell
+$orderId = 1
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/orders/$orderId" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 16. POST /checkout ]-------------------------------------------------------
+Purpose: Create order from cart
+Test with PowerShell:
+
+```powershell
+$body = @{
+    shipping_address = @{
+        name = "John Doe"
+        phone = "+260123456789"
+        address_line_1 = "123 Main St"
+        city = "Lusaka"
+        state = "Lusaka"
+        postal_code = "10101"
+        country = "Zambia"
+    }
+    payment_method = "stripe"
+} | ConvertTo-Json -Depth 10
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/checkout" `
+    -Method POST `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+🔔 NOTIFICATION ENDPOINTS
+================================================================================
+
+---[ 17. GET /notifications ]---------------------------------------------------
+Purpose: Get user's notifications
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/notifications" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 18. POST /notifications/{id}/read ]----------------------------------------
+Purpose: Mark notification as read
+Test with PowerShell:
+
+```powershell
+$notificationId = 1
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/notifications/$notificationId/read" `
+    -Method POST `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+❤️ FAVORITES ENDPOINTS
+================================================================================
+
+---[ 19. GET /favorites ]-------------------------------------------------------
+Purpose: Get user's favorite products
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/favorites" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 20. POST /favorites/{productId} ]------------------------------------------
+Purpose: Add product to favorites
+Test with PowerShell:
+
+```powershell
+$productId = 1
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/favorites/$productId" `
+    -Method POST `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 21. DELETE /favorites/{productId} ]----------------------------------------
+Purpose: Remove product from favorites
+Test with PowerShell:
+
+```powershell
+$productId = 1
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/favorites/$productId" `
+    -Method DELETE `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+👤 PROFILE ENDPOINTS
+================================================================================
+
+---[ 22. GET /user/profile ]----------------------------------------------------
+Purpose: Get user profile
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/user/profile" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 23. PUT /user/profile ]----------------------------------------------------
+Purpose: Update user profile
+Test with PowerShell:
+
+```powershell
+$body = @{
+    name = "Updated Name"
+    phone = "+260987654321"
+    location = "Lusaka, Zambia"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/user/profile" `
+    -Method PUT `
+    -Headers $headers `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+📊 ADMIN ENDPOINTS (Admin role only)
+================================================================================
+
+---[ 24. GET /admin/users ]-----------------------------------------------------
+Purpose: Get all users (Admin only)
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/admin/users" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+---[ 25. GET /admin/stats ]-----------------------------------------------------
+Purpose: Get admin dashboard statistics
+Test with PowerShell:
+
+```powershell
+$response = Invoke-RestMethod -Uri "https://envisagezm.com/api/admin/stats" `
+    -Method GET `
+    -Headers $headers
+
+$response | ConvertTo-Json -Depth 10
+```
+
+
+================================================================================
+🧪 AUTOMATED TEST SCRIPT
+================================================================================
+
+Run all tests sequentially:
+
+```powershell
+# Envisage API Test Suite
+# Save this as: Test-EnvisageAPI.ps1
+
+$baseUrl = "https://envisagezm.com/api"
+$testEmail = "test_$(Get-Random)@example.com"
+$testPassword = "TestPassword123!"
+$token = $null
+
+Write-Host "=== ENVISAGE API TEST SUITE ===" -ForegroundColor Cyan
+Write-Host ""
+
+# Helper function
+function Test-Endpoint {
+    param($Name, $Method, $Url, $Body, $Headers)
+    
+    Write-Host "Testing: $Name" -ForegroundColor Yellow
+    Write-Host "  Method: $Method" -ForegroundColor Gray
+    Write-Host "  URL: $Url" -ForegroundColor Gray
+    
+    try {
+        $params = @{
+            Uri = $Url
+            Method = $Method
+        }
+        
+        if ($Headers) { $params.Headers = $Headers }
+        if ($Body) { 
+            $params.Body = $Body
+            $params.ContentType = "application/json"
+        }
+        
+        $response = Invoke-RestMethod @params
+        Write-Host "  ✓ SUCCESS" -ForegroundColor Green
+        return $response
+    }
+    catch {
+        Write-Host "  ✗ FAILED: $($_.Exception.Message)" -ForegroundColor Red
+        return $null
+    }
+    finally {
+        Write-Host ""
+    }
+}
+
+# Test 1: Register
+$body = @{
+    name = "Test User"
+    email = $testEmail
+    password = $testPassword
+    password_confirmation = $testPassword
+} | ConvertTo-Json
+
+$response = Test-Endpoint "Register User" "POST" "$baseUrl/register" $body
+if ($response.access_token) {
+    $token = $response.access_token
+    Write-Host "Token obtained: $($token.Substring(0, 20))..." -ForegroundColor Green
+}
+
+# Setup auth headers
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Accept" = "application/json"
+}
+
+# Test 2: Get User
+Test-Endpoint "Get User Info" "GET" "$baseUrl/user" $null $headers
+
+# Test 3: List Products
+Test-Endpoint "List Products" "GET" "$baseUrl/products"
+
+# Test 4: Search Products
+Test-Endpoint "Search Products" "GET" "$baseUrl/products?search=test&category=electronics"
+
+# Test 5: Get Cart
+Test-Endpoint "Get Cart" "GET" "$baseUrl/cart" $null $headers
+
+# Test 6: Get Orders
+Test-Endpoint "Get Orders" "GET" "$baseUrl/orders" $null $headers
+
+# Test 7: Get Notifications
+Test-Endpoint "Get Notifications" "GET" "$baseUrl/notifications" $null $headers
+
+# Test 8: Get Favorites
+Test-Endpoint "Get Favorites" "GET" "$baseUrl/favorites" $null $headers
+
+# Test 9: Logout
+Test-Endpoint "Logout" "POST" "$baseUrl/logout" $null $headers
+
+Write-Host "=== TEST SUITE COMPLETE ===" -ForegroundColor Cyan
+```
+
+To run the test suite:
+```powershell
+.\Test-EnvisageAPI.ps1
+```
+
+
+================================================================================
+✅ VALIDATION CHECKLIST
+================================================================================
+
+For each endpoint, verify:
+[ ] Returns correct HTTP status code (200, 201, 400, 401, 403, 404, 500)
+[ ] Response structure matches expected format
+[ ] Required fields are present
+[ ] Data types are correct (string, number, boolean, array, object)
+[ ] Timestamps are in ISO 8601 format
+[ ] Pagination works correctly
+[ ] Authentication is enforced where required
+[ ] Authorization checks work (admin/seller/customer roles)
+[ ] Error messages are clear and helpful
+[ ] CORS headers allow frontend domain
+
+================================================================================
+END OF TESTING SCRIPT
+================================================================================
