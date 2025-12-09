@@ -224,6 +224,115 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
 });
 
+// ========== NEW FEATURES ROUTES ==========
+
+// Messaging System
+Route::middleware('auth:sanctum')->prefix('messages')->group(function() {
+    Route::get('/conversations', [\App\Http\Controllers\Api\MessagingController::class, 'conversations']);
+    Route::get('/conversations/{id}', [\App\Http\Controllers\Api\MessagingController::class, 'show']);
+    Route::post('/conversations/start', [\App\Http\Controllers\Api\MessagingController::class, 'start']);
+    Route::post('/conversations/{id}/messages', [\App\Http\Controllers\Api\MessagingController::class, 'sendMessage']);
+    Route::post('/conversations/{id}/mark-read', [\App\Http\Controllers\Api\MessagingController::class, 'markAsRead']);
+    Route::get('/unread-count', [\App\Http\Controllers\Api\MessagingController::class, 'unreadCount']);
+});
+
+// Product Q&A
+Route::prefix('products/{productId}')->group(function() {
+    Route::get('/questions', [\App\Http\Controllers\Api\ProductQuestionController::class, 'index']);
+    Route::post('/questions', [\App\Http\Controllers\Api\ProductQuestionController::class, 'store'])->middleware('auth:sanctum');
+});
+Route::middleware('auth:sanctum')->prefix('questions')->group(function() {
+    Route::post('/{questionId}/answers', [\App\Http\Controllers\Api\ProductQuestionController::class, 'storeAnswer']);
+    Route::post('/{questionId}/upvote', [\App\Http\Controllers\Api\ProductQuestionController::class, 'upvote']);
+    Route::post('/answers/{answerId}/helpful', [\App\Http\Controllers\Api\ProductQuestionController::class, 'markHelpful']);
+});
+
+// Disputes & Returns
+Route::middleware('auth:sanctum')->prefix('orders/{orderId}')->group(function() {
+    Route::post('/disputes', [\App\Http\Controllers\Api\DisputeController::class, 'createDispute']);
+    Route::post('/returns', [\App\Http\Controllers\Api\DisputeController::class, 'createReturn']);
+});
+Route::middleware('auth:sanctum')->prefix('disputes')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\DisputeController::class, 'listDisputes']);
+    Route::put('/{disputeId}', [\App\Http\Controllers\Api\DisputeController::class, 'updateDispute']);
+});
+Route::middleware('auth:sanctum')->prefix('returns')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\DisputeController::class, 'listReturns']);
+    Route::put('/{returnId}/approve', [\App\Http\Controllers\Api\DisputeController::class, 'approveReturn']);
+    Route::put('/{returnId}/tracking', [\App\Http\Controllers\Api\DisputeController::class, 'updateReturnTracking']);
+    Route::post('/{returnId}/confirm', [\App\Http\Controllers\Api\DisputeController::class, 'confirmReturn']);
+});
+
+// Subscriptions
+Route::prefix('subscriptions')->group(function() {
+    Route::get('/plans', [\App\Http\Controllers\Api\SubscriptionController::class, 'plans']);
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::get('/current', [\App\Http\Controllers\Api\SubscriptionController::class, 'currentSubscription']);
+        Route::post('/subscribe', [\App\Http\Controllers\Api\SubscriptionController::class, 'subscribe']);
+        Route::post('/cancel', [\App\Http\Controllers\Api\SubscriptionController::class, 'cancel']);
+        Route::post('/feature-product', [\App\Http\Controllers\Api\SubscriptionController::class, 'featureProduct']);
+    });
+    Route::post('/webhook', [\App\Http\Controllers\Api\SubscriptionController::class, 'webhookHandler']);
+});
+
+// Loyalty & Rewards
+Route::middleware('auth:sanctum')->prefix('loyalty')->group(function() {
+    Route::get('/points', [\App\Http\Controllers\Api\LoyaltyController::class, 'myPoints']);
+    Route::get('/transactions', [\App\Http\Controllers\Api\LoyaltyController::class, 'transactions']);
+    Route::get('/rewards', [\App\Http\Controllers\Api\LoyaltyController::class, 'rewardsCatalog']);
+    Route::post('/redeem', [\App\Http\Controllers\Api\LoyaltyController::class, 'redeemReward']);
+    Route::get('/redemptions', [\App\Http\Controllers\Api\LoyaltyController::class, 'myRedemptions']);
+    Route::get('/referral-code', [\App\Http\Controllers\Api\LoyaltyController::class, 'getReferralCode']);
+    Route::get('/referrals', [\App\Http\Controllers\Api\LoyaltyController::class, 'myReferrals']);
+    Route::post('/apply-referral', [\App\Http\Controllers\Api\LoyaltyController::class, 'applyReferralCode']);
+});
+
+// Flash Sales
+Route::prefix('flash-sales')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\FlashSaleController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\FlashSaleController::class, 'show']);
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::post('/', [\App\Http\Controllers\Api\FlashSaleController::class, 'create']);
+        Route::post('/products/{flashSaleProductId}/purchase', [\App\Http\Controllers\Api\FlashSaleController::class, 'purchase']);
+        Route::get('/my/purchases', [\App\Http\Controllers\Api\FlashSaleController::class, 'myPurchases']);
+        Route::post('/{id}/end', [\App\Http\Controllers\Api\FlashSaleController::class, 'endSale']);
+    });
+});
+
+// Product Bundles
+Route::prefix('bundles')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\BundleController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'show']);
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::post('/', [\App\Http\Controllers\Api\BundleController::class, 'create']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'delete']);
+    });
+});
+Route::get('/products/{productId}/frequently-bought', [\App\Http\Controllers\Api\BundleController::class, 'frequentlyBoughtTogether']);
+
+// Inventory Management
+Route::middleware('auth:sanctum')->prefix('inventory')->group(function() {
+    Route::put('/products/{productId}/stock', [\App\Http\Controllers\Api\InventoryController::class, 'updateStock']);
+    Route::get('/products/{productId}/history', [\App\Http\Controllers\Api\InventoryController::class, 'inventoryHistory']);
+    Route::get('/low-stock-alerts', [\App\Http\Controllers\Api\InventoryController::class, 'lowStockAlerts']);
+    Route::post('/products/{productId}/low-stock-threshold', [\App\Http\Controllers\Api\InventoryController::class, 'setLowStockThreshold']);
+    Route::post('/import', [\App\Http\Controllers\Api\InventoryController::class, 'importProducts']);
+    Route::get('/import/{importId}/status', [\App\Http\Controllers\Api\InventoryController::class, 'importStatus']);
+    Route::get('/export', [\App\Http\Controllers\Api\InventoryController::class, 'exportProducts']);
+    Route::post('/bulk-update-prices', [\App\Http\Controllers\Api\InventoryController::class, 'bulkUpdatePrices']);
+});
+
+// Abandoned Cart Recovery
+Route::middleware('auth:sanctum')->prefix('abandoned-carts')->group(function() {
+    Route::post('/track', [\App\Http\Controllers\Api\AbandonedCartController::class, 'track']);
+    Route::get('/list', [\App\Http\Controllers\Api\AbandonedCartController::class, 'list']);
+    Route::get('/stats', [\App\Http\Controllers\Api\AbandonedCartController::class, 'stats']);
+});
+Route::get('/abandoned-carts/recover/{token}', [\App\Http\Controllers\Api\AbandonedCartController::class, 'recover']);
+Route::get('/abandoned-carts/email/{emailId}/open', [\App\Http\Controllers\Api\AbandonedCartController::class, 'trackEmailOpen']);
+Route::get('/abandoned-carts/email/{emailId}/click', [\App\Http\Controllers\Api\AbandonedCartController::class, 'trackEmailClick']);
+
 // ========== STRIPE WEBHOOK (No Auth Required) ==========
 Route::post('/webhooks/stripe', [PaymentController::class, 'handleWebhook']);
 
@@ -245,3 +354,57 @@ Route::get('/blog-posts', [BlogPostController::class, 'index']);
 Route::get('/blog-posts/{id}', [BlogPostController::class, 'show']);
 Route::get('/payments', [PaymentController::class, 'index']);
 Route::get('/payments/{id}', [PaymentController::class, 'show']);
+
+// ========== ADMIN ROUTES ==========
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function() {
+    
+    // Dispute Management
+    Route::get('/disputes', [\App\Http\Controllers\Api\AdminController::class, 'disputes']);
+    Route::put('/disputes/{id}/update', [\App\Http\Controllers\Api\AdminController::class, 'updateDispute']);
+    
+    // Flash Sale Management
+    Route::get('/flash-sales', [\App\Http\Controllers\Api\AdminController::class, 'flashSales']);
+    
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\Api\AdminController::class, 'analytics']);
+    Route::get('/analytics/export', [\App\Http\Controllers\Api\AdminController::class, 'exportAnalytics']);
+    
+    // Subscription Plan Management
+    Route::get('/subscription-plans', [\App\Http\Controllers\Api\AdminController::class, 'subscriptionPlans']);
+    Route::post('/subscription-plans', [\App\Http\Controllers\Api\AdminController::class, 'createPlan']);
+    Route::put('/subscription-plans/{id}', [\App\Http\Controllers\Api\AdminController::class, 'updatePlan']);
+    Route::delete('/subscription-plans/{id}', [\App\Http\Controllers\Api\AdminController::class, 'deletePlan']);
+    
+    // Inventory Management
+    Route::get('/inventory', [\App\Http\Controllers\Api\InventoryController::class, 'index']);
+    Route::get('/inventory/alerts', [\App\Http\Controllers\Api\InventoryController::class, 'alerts']);
+    Route::post('/inventory/{id}/restock', [\App\Http\Controllers\Api\InventoryController::class, 'restock']);
+    Route::put('/inventory/{id}/threshold', [\App\Http\Controllers\Api\InventoryController::class, 'updateThreshold']);
+    
+    // User Management
+    Route::get('/users', [\App\Http\Controllers\Api\UserManagementController::class, 'index']);
+    Route::put('/users/{id}/role', [\App\Http\Controllers\Api\UserManagementController::class, 'updateRole']);
+    Route::put('/users/{id}/status', [\App\Http\Controllers\Api\UserManagementController::class, 'updateStatus']);
+    
+    // Reporting
+    Route::get('/reports', [\App\Http\Controllers\Api\ReportController::class, 'index']);
+    Route::post('/reports/generate', [\App\Http\Controllers\Api\ReportController::class, 'generate']);
+    Route::get('/reports/{id}/download', [\App\Http\Controllers\Api\ReportController::class, 'download']);
+    
+    // Refund Management
+    Route::get('/refunds', [\App\Http\Controllers\Api\RefundController::class, 'index']);
+    Route::put('/refunds/{id}/process', [\App\Http\Controllers\Api\RefundController::class, 'process']);
+    
+    // Featured Products
+    Route::get('/products/available-for-featuring', [\App\Http\Controllers\Api\FeaturedProductController::class, 'availableProducts']);
+    Route::get('/products/featured', [\App\Http\Controllers\Api\FeaturedProductController::class, 'featured']);
+    Route::post('/products/{id}/feature', [\App\Http\Controllers\Api\FeaturedProductController::class, 'feature']);
+    Route::delete('/products/{id}/unfeature', [\App\Http\Controllers\Api\FeaturedProductController::class, 'unfeature']);
+    
+    // Loyalty Tiers
+    Route::get('/loyalty-tiers', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'index']);
+    Route::post('/loyalty-tiers', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'store']);
+    Route::put('/loyalty-tiers/{id}', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'update']);
+    Route::delete('/loyalty-tiers/{id}', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'destroy']);
+    Route::get('/loyalty-tiers/stats', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'stats']);
+});

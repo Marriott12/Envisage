@@ -1,0 +1,464 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Envisage Admin API",
+  "dateExported": "2024-12-03",
+  "version": "1.1",
+  "folders": [
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "folders": [],
+      "requests": []
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "folders": [],
+      "requests": []
+    },
+    {
+      "id": "disputes",
+      "name": "Disputes",
+      "folders": [],
+      "requests": []
+    },
+    {
+      "id": "flash-sales",
+      "name": "Flash Sales",
+      "folders": [],
+      "requests": []
+    },
+    {
+      "id": "subscriptions",
+      "name": "Subscription Plans",
+      "folders": [],
+      "requests": []
+    }
+  ],
+  "requests": [
+    {
+      "id": "req-login",
+      "name": "Login as Admin",
+      "folderId": "auth",
+      "method": "POST",
+      "url": "{{base_url}}/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin@envisage.com\",\n  \"password\": \"admin123\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "json.success",
+          "action": "equal",
+          "expected": "true"
+        }
+      ]
+    },
+    {
+      "id": "req-analytics-7d",
+      "name": "Get Analytics (7 days)",
+      "folderId": "analytics",
+      "method": "GET",
+      "url": "{{base_url}}/admin/analytics?range=7d",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-analytics-30d",
+      "name": "Get Analytics (30 days)",
+      "folderId": "analytics",
+      "method": "GET",
+      "url": "{{base_url}}/admin/analytics?range=30d",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-analytics-90d",
+      "name": "Get Analytics (90 days)",
+      "folderId": "analytics",
+      "method": "GET",
+      "url": "{{base_url}}/admin/analytics?range=90d",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-export-analytics",
+      "name": "Export Analytics CSV",
+      "folderId": "analytics",
+      "method": "GET",
+      "url": "{{base_url}}/admin/analytics/export?range=30d",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-disputes-all",
+      "name": "Get All Disputes",
+      "folderId": "disputes",
+      "method": "GET",
+      "url": "{{base_url}}/admin/disputes",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-disputes-pending",
+      "name": "Get Pending Disputes",
+      "folderId": "disputes",
+      "method": "GET",
+      "url": "{{base_url}}/admin/disputes?status=pending",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-disputes-search",
+      "name": "Search Disputes",
+      "folderId": "disputes",
+      "method": "GET",
+      "url": "{{base_url}}/admin/disputes?search=refund&status=all&type=refund",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-dispute-approve",
+      "name": "Approve Dispute",
+      "folderId": "disputes",
+      "method": "PUT",
+      "url": "{{base_url}}/admin/disputes/1/update",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"status\": \"approved\",\n  \"admin_response\": \"We have reviewed your case and approved your refund request. You will receive the refund within 5-7 business days.\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-dispute-reject",
+      "name": "Reject Dispute",
+      "folderId": "disputes",
+      "method": "PUT",
+      "url": "{{base_url}}/admin/disputes/1/update",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"status\": \"rejected\",\n  \"admin_response\": \"After careful review, we cannot approve this request due to policy violations.\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-flash-sales",
+      "name": "Get All Flash Sales",
+      "folderId": "flash-sales",
+      "method": "GET",
+      "url": "{{base_url}}/admin/flash-sales",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-plans-all",
+      "name": "Get All Subscription Plans",
+      "folderId": "subscriptions",
+      "method": "GET",
+      "url": "{{base_url}}/admin/subscription-plans",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-plan-create-starter",
+      "name": "Create Starter Plan",
+      "folderId": "subscriptions",
+      "method": "POST",
+      "url": "{{base_url}}/admin/subscription-plans",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Starter\",\n  \"slug\": \"starter\",\n  \"description\": \"Perfect for new sellers getting started\",\n  \"monthly_price\": 9.99,\n  \"yearly_price\": 99.99,\n  \"features\": [\n    \"Up to 25 products\",\n    \"Email support\",\n    \"Basic analytics\",\n    \"Mobile app access\"\n  ],\n  \"max_products\": 25,\n  \"max_featured_products\": 1,\n  \"commission_rate\": 15,\n  \"is_popular\": false,\n  \"is_active\": true\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "id": "req-plan-create-pro",
+      "name": "Create Professional Plan",
+      "folderId": "subscriptions",
+      "method": "POST",
+      "url": "{{base_url}}/admin/subscription-plans",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Professional\",\n  \"slug\": \"professional\",\n  \"description\": \"For growing businesses\",\n  \"monthly_price\": 29.99,\n  \"yearly_price\": 299.99,\n  \"features\": [\n    \"Unlimited products\",\n    \"Priority support\",\n    \"Advanced analytics\",\n    \"Custom branding\",\n    \"API access\"\n  ],\n  \"max_products\": null,\n  \"max_featured_products\": 5,\n  \"commission_rate\": 10,\n  \"is_popular\": true,\n  \"is_active\": true\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "id": "req-plan-update",
+      "name": "Update Subscription Plan",
+      "folderId": "subscriptions",
+      "method": "PUT",
+      "url": "{{base_url}}/admin/subscription-plans/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Starter Plus\",\n  \"slug\": \"starter-plus\",\n  \"description\": \"Enhanced starter plan\",\n  \"monthly_price\": 14.99,\n  \"yearly_price\": 149.99,\n  \"features\": [\n    \"Up to 50 products\",\n    \"Priority email support\",\n    \"Advanced analytics\",\n    \"Mobile app access\"\n  ],\n  \"max_products\": 50,\n  \"max_featured_products\": 2,\n  \"commission_rate\": 12,\n  \"is_popular\": false,\n  \"is_active\": true\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-plan-delete",
+      "name": "Delete Subscription Plan",
+      "folderId": "subscriptions",
+      "method": "DELETE",
+      "url": "{{base_url}}/admin/subscription-plans/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{admin_token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    }
+  ]
+}

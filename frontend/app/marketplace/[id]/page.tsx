@@ -44,7 +44,7 @@ export default function ListingDetailPage() {
   const { user, isAuthenticated } = useAuth();
   const { addItem } = useCartStore();
 
-  const listingId = params.id as string;
+  const listingId = params?.id as string;
 
   useEffect(() => {
     if (listingId) {

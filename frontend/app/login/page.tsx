@@ -19,7 +19,7 @@ export default function LoginPage() {
   const { login, isLoading, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || null;
+  const redirectTo = searchParams?.get('redirect') || null;
 
   const {
     register,

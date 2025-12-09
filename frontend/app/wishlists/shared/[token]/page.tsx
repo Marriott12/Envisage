@@ -28,7 +28,7 @@ interface SharedWishlist {
 
 export default function SharedWishlistPage() {
   const params = useParams();
-  const token = params.token as string;
+  const token = params?.token as string;
   const [wishlist, setWishlist] = useState<SharedWishlist | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

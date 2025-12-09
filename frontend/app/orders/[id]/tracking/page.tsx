@@ -65,7 +65,7 @@ function OrderTrackingContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const orderId = params.id as string;
+  const orderId = params?.id as string;
 
   useEffect(() => {
     if (orderId) {
