@@ -141,7 +141,7 @@ class ShippingService
     public function getTrackingInfo($carrier, $trackingNumber)
     {
         try {
-            $tracking = \Shippo_Track::get_tracking_info([
+            $tracking = \Shippo_Track::retrieve([
                 'carrier' => $carrier,
                 'tracking_number' => $trackingNumber,
             ]);

@@ -9,6 +9,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\LoyaltyPoint[] $loyaltyPoints
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentMethod[] $paymentMethods
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product[] $products
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany loyaltyPoints()
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany paymentMethods()
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany wishlist()
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany cart()
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
