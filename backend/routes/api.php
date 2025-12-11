@@ -490,3 +490,50 @@ Route::prefix('recently-viewed')->middleware('auth:sanctum')->group(function () 
     Route::post('/', [\App\Http\Controllers\Api\RecentlyViewedController::class, 'track']);
     Route::delete('/{id}', [\App\Http\Controllers\Api\RecentlyViewedController::class, 'remove']);
 });
+
+// ==================== TWO-FACTOR AUTHENTICATION ====================
+Route::prefix('2fa')->middleware('auth:sanctum')->group(function () {
+    Route::post('/enable', [\App\Http\Controllers\Api\TwoFactorController::class, 'enable']);
+    Route::post('/verify', [\App\Http\Controllers\Api\TwoFactorController::class, 'verify']);
+    Route::post('/disable', [\App\Http\Controllers\Api\TwoFactorController::class, 'disable']);
+    Route::post('/regenerate-backup-codes', [\App\Http\Controllers\Api\TwoFactorController::class, 'regenerateBackupCodes']);
+});
+
+// 2FA validation endpoint (no auth required - used during login)
+Route::post('/2fa/validate', [\App\Http\Controllers\Api\TwoFactorController::class, 'validateCode']);
+
+// ==================== SECURITY ====================
+Route::prefix('security')->middleware('auth:sanctum')->group(function () {
+    Route::get('/logs', [\App\Http\Controllers\Api\SecurityController::class, 'logs']);
+    Route::get('/login-activity', [\App\Http\Controllers\Api\SecurityController::class, 'loginActivity']);
+    Route::get('/active-sessions', [\App\Http\Controllers\Api\SecurityController::class, 'activeSessions']);
+    Route::get('/suspicious-activity', [\App\Http\Controllers\Api\SecurityController::class, 'suspiciousActivity']);
+});
+
+// ==================== GDPR COMPLIANCE ====================
+Route::prefix('gdpr')->middleware('auth:sanctum')->group(function () {
+    Route::post('/export-data', [\App\Http\Controllers\Api\GDPRController::class, 'exportData']);
+    Route::get('/download-data/{filename}', [\App\Http\Controllers\Api\GDPRController::class, 'downloadData']);
+    Route::get('/portability-export', [\App\Http\Controllers\Api\GDPRController::class, 'portabilityExport']);
+    Route::post('/request-deletion', [\App\Http\Controllers\Api\GDPRController::class, 'requestDeletion']);
+    Route::post('/cancel-deletion', [\App\Http\Controllers\Api\GDPRController::class, 'cancelDeletion']);
+    Route::get('/consents', [\App\Http\Controllers\Api\GDPRController::class, 'getConsents']);
+    Route::put('/consents', [\App\Http\Controllers\Api\GDPRController::class, 'updateConsents']);
+});
+
+// ==================== SHIPPING SYSTEM ====================
+Route::prefix('shipping')->group(function () {
+    // Public endpoints
+    Route::post('/validate-address', [\App\Http\Controllers\Api\ShippingController::class, 'validateAddress']);
+    Route::post('/calculate-cost', [\App\Http\Controllers\Api\ShippingController::class, 'calculateCost']);
+    Route::post('/get-rates', [\App\Http\Controllers\Api\ShippingController::class, 'getRates']);
+    Route::get('/methods', [\App\Http\Controllers\Api\ShippingController::class, 'getMethods']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/purchase-label', [\App\Http\Controllers\Api\ShippingController::class, 'purchaseLabel']);
+        Route::get('/tracking/{orderId}', [\App\Http\Controllers\Api\ShippingController::class, 'getTracking']);
+        Route::post('/return-label', [\App\Http\Controllers\Api\ShippingController::class, 'createReturnLabel']);
+        Route::post('/batch-track', [\App\Http\Controllers\Api\ShippingController::class, 'batchTrack']);
+    });
+});
