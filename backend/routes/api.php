@@ -565,3 +565,12 @@ Route::prefix('wishlist-share')->group(function () {
     });
     Route::get('/{token}', [\App\Http\Controllers\Api\WishlistSharingController::class, 'getShared']);
 });
+
+// ==================== PRICE DROP ALERTS ====================
+Route::prefix('price-alerts')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\PriceAlertController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Api\PriceAlertController::class, 'store']);
+    Route::put('/{id}', [\App\Http\Controllers\Api\PriceAlertController::class, 'update']);
+    Route::delete('/{id}', [\App\Http\Controllers\Api\PriceAlertController::class, 'destroy']);
+});
+Route::post('/price-alerts/check', [\App\Http\Controllers\Api\PriceAlertController::class, 'checkPrices']); // Cron job endpoint
