@@ -537,3 +537,31 @@ Route::prefix('shipping')->group(function () {
         Route::post('/batch-track', [\App\Http\Controllers\Api\ShippingController::class, 'batchTrack']);
     });
 });
+
+// ==================== BULK OPERATIONS ====================
+Route::prefix('bulk')->middleware('auth:sanctum')->group(function () {
+    Route::post('/products/update', [\App\Http\Controllers\Api\BulkOperationsController::class, 'bulkUpdateProducts']);
+    Route::post('/products/delete', [\App\Http\Controllers\Api\BulkOperationsController::class, 'bulkDeleteProducts']);
+    Route::get('/products/export', [\App\Http\Controllers\Api\BulkOperationsController::class, 'bulkExportProducts']);
+    Route::post('/products/import', [\App\Http\Controllers\Api\BulkOperationsController::class, 'bulkImportProducts']);
+    Route::post('/orders/update', [\App\Http\Controllers\Api\BulkOperationsController::class, 'bulkUpdateOrders']);
+});
+
+// ==================== LIVE CHAT ====================
+Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
+    Route::get('/conversations', [\App\Http\Controllers\Api\LiveChatController::class, 'conversations']);
+    Route::post('/conversations/start', [\App\Http\Controllers\Api\LiveChatController::class, 'startConversation']);
+    Route::get('/conversations/{id}/messages', [\App\Http\Controllers\Api\LiveChatController::class, 'messages']);
+    Route::post('/conversations/{id}/messages', [\App\Http\Controllers\Api\LiveChatController::class, 'sendMessage']);
+    Route::get('/unread-count', [\App\Http\Controllers\Api\LiveChatController::class, 'unreadCount']);
+    Route::put('/conversations/{id}/close', [\App\Http\Controllers\Api\LiveChatController::class, 'closeConversation']);
+});
+
+// ==================== WISHLIST SHARING ====================
+Route::prefix('wishlist-share')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\WishlistSharingController::class, 'share']);
+        Route::delete('/{token}', [\App\Http\Controllers\Api\WishlistSharingController::class, 'revoke']);
+    });
+    Route::get('/{token}', [\App\Http\Controllers\Api\WishlistSharingController::class, 'getShared']);
+});
