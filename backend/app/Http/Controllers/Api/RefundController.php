@@ -40,7 +40,7 @@ class RefundController extends Controller
                          ->paginate($request->per_page ?? 15);
 
         // Transform data for frontend
-        $refunds->getCollection()->transform(function($refund) {
+        $refunds->through(function($refund) {
             return [
                 'id' => $refund->id,
                 'order_id' => $refund->order->order_number ?? 'N/A',

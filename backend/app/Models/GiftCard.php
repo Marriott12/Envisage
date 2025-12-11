@@ -41,6 +41,6 @@ class GiftCard extends Model
     {
         return $this->status === 'active' && 
                $this->balance > 0 && 
-               (!$this->expires_at || $this->expires_at->isFuture());
+               (!$this->expires_at || $this->expires_at > now());
     }
 }

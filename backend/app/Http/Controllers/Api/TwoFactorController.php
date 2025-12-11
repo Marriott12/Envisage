@@ -7,10 +7,6 @@ use App\Models\TwoFactorCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use PragmaRX\Google2FA\Google2FA;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
 
 class TwoFactorController extends Controller
 {
@@ -41,21 +37,12 @@ class TwoFactorController extends Controller
         $user->two_factor_secret = encrypt($secret);
         $user->save();
 
-        // Generate QR code
+        // Generate QR code URL (frontend will generate the actual QR code image)
         $qrCodeUrl = $this->google2fa->getQRCodeUrl(
             config('app.name'),
             $user->email,
             $secret
         );
-
-        $writer = new Writer(
-            new ImageRenderer(
-                new RendererStyle(200),
-                new SvgImageBackEnd()
-            )
-        );
-
-        $qrCodeSvg = $writer->writeString($qrCodeUrl);
 
         // Generate backup codes
         $backupCodes = $this->generateBackupCodes();
@@ -64,7 +51,7 @@ class TwoFactorController extends Controller
 
         return response()->json([
             'secret' => $secret,
-            'qr_code' => base64_encode($qrCodeSvg),
+            'qr_code_url' => $qrCodeUrl,
             'backup_codes' => $backupCodes,
             'message' => 'Scan the QR code with your authenticator app and verify with a code'
         ]);

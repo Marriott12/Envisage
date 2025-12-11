@@ -35,12 +35,13 @@ class ShippingService
             ];
 
             $validatedAddress = Shippo_Address::create($addressData);
+            $validationResults = (array) $validatedAddress['validation_results'];
 
             return [
                 'success' => true,
-                'valid' => $validatedAddress['validation_results']['is_valid'],
+                'valid' => $validationResults['is_valid'] ?? false,
                 'address' => $validatedAddress,
-                'messages' => $validatedAddress['validation_results']['messages'] ?? [],
+                'messages' => $validationResults['messages'] ?? [],
             ];
         } catch (\Exception $e) {
             return [
@@ -140,7 +141,10 @@ class ShippingService
     public function getTrackingInfo($carrier, $trackingNumber)
     {
         try {
-            $tracking = Shippo::Track($carrier, $trackingNumber);
+            $tracking = \Shippo_Track::get_tracking_info([
+                'carrier' => $carrier,
+                'tracking_number' => $trackingNumber,
+            ]);
 
             return [
                 'success' => true,
@@ -175,11 +179,14 @@ class ShippingService
                 'async' => false,
             ]);
 
-            if ($shipment['status'] === 'SUCCESS' && !empty($shipment['rates'])) {
+            $rates = (array) $shipment['rates'];
+            if ($shipment['status'] === 'SUCCESS' && !empty($rates)) {
                 // Use the cheapest rate
-                $cheapestRate = $shipment['rates'][0];
-                foreach ($shipment['rates'] as $rate) {
-                    if (floatval($rate['amount']) < floatval($cheapestRate['amount'])) {
+                $cheapestRate = $rates[0];
+                foreach ($rates as $rate) {
+                    $rateArray = (array) $rate;
+                    $cheapestArray = (array) $cheapestRate;
+                    if (floatval($rateArray['amount']) < floatval($cheapestArray['amount'])) {
                         $cheapestRate = $rate;
                     }
                 }

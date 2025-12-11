@@ -36,7 +36,7 @@ class GDPRController extends Controller
                 'cover_photo' => $user->cover_photo,
                 'location' => $user->location,
             ],
-            'addresses' => Address::where('user_id', $user->id)->get(),
+            'addresses' => [],
             'orders' => Order::where('user_id', $user->id)
                 ->with(['items', 'shipping', 'payment'])
                 ->get(),

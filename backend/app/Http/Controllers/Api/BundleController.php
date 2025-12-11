@@ -159,9 +159,9 @@ class BundleController extends Controller
     public function updateFrequentlyBought($orderId)
     {
         // This should be called after order completion
-        $order = \App\Models\Order::with('items.product')->findOrFail($orderId);
+        $order = \App\Models\Order::with('items')->findOrFail($orderId);
         
-        $productIds = $order->items->pluck('product_id')->toArray();
+        $productIds = collect($order->items)->pluck('product_id')->toArray();
         
         // Update frequently bought together for each product pair
         for ($i = 0; $i < count($productIds); $i++) {

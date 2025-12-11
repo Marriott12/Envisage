@@ -116,9 +116,17 @@ class CloudinaryService
             $transformation['crop'] = $crop;
         }
 
-        return $this->cloudinary->image($publicId)
-            ->resize($transformation)
-            ->toUrl();
+        // Build URL with transformations
+        $url = $publicId;
+        if (!empty($transformation)) {
+            $transformStr = [];
+            foreach ($transformation as $key => $value) {
+                $transformStr[] = "{$key}_{$value}";
+            }
+            $url = implode(',', $transformStr) . '/' . $publicId;
+        }
+        
+        return $this->cloudinary->image($url)->toUrl();
     }
 
     /**

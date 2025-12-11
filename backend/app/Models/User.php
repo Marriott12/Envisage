@@ -147,5 +147,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSession::class);
     }
+
+    // Loyalty points relationship
+    public function loyaltyPoints()
+    {
+        return $this->hasMany(LoyaltyPoint::class);
+    }
+
+    // Payment methods relationship
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    // Wishlist relationship
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    // Cart relationship
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }
 

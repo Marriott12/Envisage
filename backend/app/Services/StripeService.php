@@ -221,4 +221,61 @@ class StripeService
             throw new \Exception('Payment method detachment failed: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Create subscription
+     */
+    public function createSubscription($customerId, $paymentMethodId, $priceId)
+    {
+        try {
+            // Attach payment method to customer
+            $this->attachPaymentMethod($paymentMethodId, $customerId);
+
+            // Set as default payment method
+            StripeCustomer::update($customerId, [
+                'invoice_settings' => [
+                    'default_payment_method' => $paymentMethodId,
+                ],
+            ]);
+
+            // Create subscription
+            $subscription = \Stripe\Subscription::create([
+                'customer' => $customerId,
+                'items' => [['price' => $priceId]],
+                'expand' => ['latest_invoice.payment_intent'],
+            ]);
+
+            return $subscription;
+        } catch (\Exception $e) {
+            throw new \Exception('Subscription creation failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cancel subscription
+     */
+    public function cancelSubscription($subscriptionId)
+    {
+        try {
+            $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+            return $subscription->cancel();
+        } catch (\Exception $e) {
+            throw new \Exception('Subscription cancellation failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Resume subscription
+     */
+    public function resumeSubscription($subscriptionId)
+    {
+        try {
+            $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+            return \Stripe\Subscription::update($subscriptionId, [
+                'cancel_at_period_end' => false,
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception('Subscription resume failed: ' . $e->getMessage());
+        }
+    }
 }

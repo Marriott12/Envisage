@@ -31,14 +31,16 @@ class ProcessProductImages implements ShouldQueue
         );
 
         // Update product with Cloudinary URLs
+        // Note: ProductImage model needs to be created for full functionality
         foreach ($uploadedImages as $index => $imageData) {
-            \App\Models\ProductImage::create([
-                'product_id' => $this->product->id,
-                'image_url' => $imageData['url'],
-                'cloudinary_public_id' => $imageData['public_id'],
-                'thumbnail_url' => $imageData['thumbnail'],
-                'order' => $index,
-            ]);
+            // TODO: Create ProductImage model and migration
+            // \App\Models\ProductImage::create([
+            //     'product_id' => $this->product->id,
+            //     'image_url' => $imageData['url'],
+            //     'cloudinary_public_id' => $imageData['public_id'],
+            //     'thumbnail_url' => $imageData['thumbnail'],
+            //     'order' => $index,
+            // ]);
         }
     }
 }
