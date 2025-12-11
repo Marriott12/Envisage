@@ -574,3 +574,65 @@ Route::prefix('price-alerts')->middleware('auth:sanctum')->group(function () {
     Route::delete('/{id}', [\App\Http\Controllers\Api\PriceAlertController::class, 'destroy']);
 });
 Route::post('/price-alerts/check', [\App\Http\Controllers\Api\PriceAlertController::class, 'checkPrices']); // Cron job endpoint
+
+// ==================== FLASH SALES ====================
+Route::prefix('flash-sales')->group(function () {
+    // Public endpoints
+    Route::get('/active', [\App\Http\Controllers\Api\FlashSaleController::class, 'active']);
+    Route::get('/upcoming', [\App\Http\Controllers\Api\FlashSaleController::class, 'upcoming']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\FlashSaleController::class, 'show']);
+    Route::post('/{id}/subscribe', [\App\Http\Controllers\Api\FlashSaleController::class, 'subscribe']);
+    
+    // Admin endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\FlashSaleController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\FlashSaleController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\FlashSaleController::class, 'destroy']);
+    });
+});
+
+// ==================== BUNDLE DEALS ====================
+Route::prefix('bundles')->group(function () {
+    // Public endpoints
+    Route::get('/', [\App\Http\Controllers\Api\BundleController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'show']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\BundleController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\BundleController::class, 'destroy']);
+        Route::post('/{id}/purchase', [\App\Http\Controllers\Api\BundleController::class, 'purchase']);
+    });
+});
+
+// ==================== PRODUCT Q&A ====================
+Route::prefix('products/{productId}/questions')->group(function () {
+    // Public endpoints
+    Route::get('/', [\App\Http\Controllers\Api\ProductQuestionController::class, 'index']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\ProductQuestionController::class, 'store']);
+        Route::post('/{questionId}/answer', [\App\Http\Controllers\Api\ProductQuestionController::class, 'answer']);
+        Route::post('/{questionId}/helpful', [\App\Http\Controllers\Api\ProductQuestionController::class, 'markHelpful']);
+        Route::delete('/{questionId}', [\App\Http\Controllers\Api\ProductQuestionController::class, 'destroy']);
+    });
+});
+
+// ==================== SUBSCRIPTIONS ====================
+Route::prefix('subscriptions')->group(function () {
+    // Public endpoints
+    Route::get('/plans', [\App\Http\Controllers\Api\SubscriptionController::class, 'plans']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/current', [\App\Http\Controllers\Api\SubscriptionController::class, 'current']);
+        Route::post('/subscribe', [\App\Http\Controllers\Api\SubscriptionController::class, 'subscribe']);
+        Route::post('/cancel', [\App\Http\Controllers\Api\SubscriptionController::class, 'cancel']);
+        Route::post('/resume', [\App\Http\Controllers\Api\SubscriptionController::class, 'resume']);
+    });
+    
+    // Webhook endpoint (no auth - verified by Stripe signature)
+    Route::post('/webhook', [\App\Http\Controllers\Api\SubscriptionController::class, 'webhook']);
+});
