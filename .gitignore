@@ -64,6 +64,10 @@ desktop.ini
 node_modules/
 package-lock.json
 
+# Composer dependencies
+vendor/
+composer.lock
+
 # Uploads directory (user uploads)
 uploads/
 assets/uploads/

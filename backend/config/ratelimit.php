@@ -1,6 +1,3 @@
-# API Rate Limiting Configuration
-# Add to backend/config/app.php or create new config file
-
 <?php
 
 return [

@@ -337,9 +337,10 @@ Route::get('/abandoned-carts/email/{emailId}/click', [\App\Http\Controllers\Api\
 Route::post('/webhooks/stripe', [PaymentController::class, 'handleWebhook']);
 
 // ========== SEO ROUTES (Public) ==========
-Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'generate']);
-Route::get('/seo/meta', [\App\Http\Controllers\SeoController::class, 'meta']);
-Route::get('/seo/structured-data', [\App\Http\Controllers\SeoController::class, 'structuredData']);
+Route::get('/sitemap.xml', [\App\Http\Controllers\SeoController::class, 'sitemap']);
+Route::get('/robots.txt', [\App\Http\Controllers\SeoController::class, 'robots']);
+Route::get('/meta', [\App\Http\Controllers\SeoController::class, 'meta']);
+Route::get('/structured-data', [\App\Http\Controllers\SeoController::class, 'structuredData']);
 
 // ========== PUBLIC SETTINGS ==========
 Route::get('/settings/public', [\App\Http\Controllers\Admin\SettingsController::class, 'public']);
@@ -406,4 +407,86 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::put('/loyalty-tiers/{id}', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'update']);
     Route::delete('/loyalty-tiers/{id}', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'destroy']);
     Route::get('/loyalty-tiers/stats', [\App\Http\Controllers\Api\LoyaltyTierController::class, 'stats']);
+});
+
+// ==================== PAYMENT ROUTES ====================
+Route::prefix('payments')->middleware('auth:sanctum')->group(function () {
+    Route::post('/create-intent', [\App\Http\Controllers\Api\PaymentController::class, 'createIntent']);
+    Route::get('/methods', [\App\Http\Controllers\Api\PaymentController::class, 'getPaymentMethods']);
+    Route::post('/methods', [\App\Http\Controllers\Api\PaymentController::class, 'savePaymentMethod']);
+    Route::delete('/methods/{id}', [\App\Http\Controllers\Api\PaymentController::class, 'deletePaymentMethod']);
+    Route::post('/methods/{id}/set-default', [\App\Http\Controllers\Api\PaymentController::class, 'setDefaultPaymentMethod']);
+    Route::post('/split-payment', [\App\Http\Controllers\Api\PaymentController::class, 'processSplitPayment']);
+});
+
+Route::post('/payments/webhook', [\App\Http\Controllers\Api\PaymentController::class, 'webhook']); // No auth for webhook
+
+// ==================== GIFT CARDS & VOUCHERS ====================
+Route::prefix('gift-cards')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\GiftCardController::class, 'purchase']);
+        Route::get('/my-cards', [\App\Http\Controllers\Api\GiftCardController::class, 'myCards']);
+    });
+    Route::post('/validate', [\App\Http\Controllers\Api\GiftCardController::class, 'validateCard']);
+    Route::post('/apply', [\App\Http\Controllers\Api\GiftCardController::class, 'apply']);
+});
+
+Route::prefix('vouchers')->group(function () {
+    Route::post('/validate', [\App\Http\Controllers\Api\VoucherController::class, 'validateCode']);
+    Route::post('/apply', [\App\Http\Controllers\Api\VoucherController::class, 'apply']);
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\VoucherController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\Api\VoucherController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\VoucherController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\VoucherController::class, 'destroy']);
+    });
+});
+
+// ==================== OFFERS (MAKE AN OFFER) ====================
+Route::prefix('offers')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [\App\Http\Controllers\Api\OfferController::class, 'create']);
+    Route::get('/sent', [\App\Http\Controllers\Api\OfferController::class, 'sentOffers']);
+    Route::get('/received', [\App\Http\Controllers\Api\OfferController::class, 'receivedOffers']);
+    Route::post('/{id}/counter', [\App\Http\Controllers\Api\OfferController::class, 'counter']);
+    Route::post('/{id}/accept', [\App\Http\Controllers\Api\OfferController::class, 'accept']);
+    Route::post('/{id}/reject', [\App\Http\Controllers\Api\OfferController::class, 'reject']);
+});
+
+// ==================== SUPPORT TICKETS ====================
+Route::prefix('support')->middleware('auth:sanctum')->group(function () {
+    Route::get('/tickets', [\App\Http\Controllers\Api\SupportController::class, 'index']);
+    Route::post('/tickets', [\App\Http\Controllers\Api\SupportController::class, 'create']);
+    Route::get('/tickets/{id}', [\App\Http\Controllers\Api\SupportController::class, 'show']);
+    Route::post('/tickets/{id}/messages', [\App\Http\Controllers\Api\SupportController::class, 'addMessage']);
+    Route::put('/tickets/{id}/close', [\App\Http\Controllers\Api\SupportController::class, 'close']);
+    
+    // Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/tickets/all', [\App\Http\Controllers\Api\SupportController::class, 'allTickets']);
+        Route::put('/tickets/{id}/assign', [\App\Http\Controllers\Api\SupportController::class, 'assign']);
+        Route::put('/tickets/{id}/status', [\App\Http\Controllers\Api\SupportController::class, 'updateStatus']);
+    });
+});
+
+// ==================== AFFILIATE PROGRAM ====================
+Route::prefix('affiliates')->middleware('auth:sanctum')->group(function () {
+    Route::post('/join', [\App\Http\Controllers\Api\AffiliateController::class, 'join']);
+    Route::get('/dashboard', [\App\Http\Controllers\Api\AffiliateController::class, 'dashboard']);
+    Route::get('/conversions', [\App\Http\Controllers\Api\AffiliateController::class, 'conversions']);
+    Route::get('/stats', [\App\Http\Controllers\Api\AffiliateController::class, 'stats']);
+});
+
+// ==================== ADVANCED SEARCH ====================
+Route::prefix('search')->group(function () {
+    Route::get('/products', [\App\Http\Controllers\Api\SearchController::class, 'products']);
+    Route::get('/autocomplete', [\App\Http\Controllers\Api\SearchController::class, 'autocomplete']);
+    Route::get('/suggestions', [\App\Http\Controllers\Api\SearchController::class, 'suggestions']);
+    Route::middleware('auth:sanctum')->get('/history', [\App\Http\Controllers\Api\SearchController::class, 'history']);
+});
+
+// ==================== RECENTLY VIEWED ====================
+Route::prefix('recently-viewed')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\RecentlyViewedController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Api\RecentlyViewedController::class, 'track']);
+    Route::delete('/{id}', [\App\Http\Controllers\Api\RecentlyViewedController::class, 'remove']);
 });
