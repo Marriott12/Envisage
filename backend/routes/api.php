@@ -337,10 +337,9 @@ Route::get('/abandoned-carts/email/{emailId}/click', [\App\Http\Controllers\Api\
 Route::post('/webhooks/stripe', [PaymentController::class, 'handleWebhook']);
 
 // ========== SEO ROUTES (Public) ==========
-Route::get('/sitemap.xml', [\App\Http\Controllers\SeoController::class, 'sitemap']);
-Route::get('/robots.txt', [\App\Http\Controllers\SeoController::class, 'robots']);
-Route::get('/meta', [\App\Http\Controllers\SeoController::class, 'meta']);
-Route::get('/structured-data', [\App\Http\Controllers\SeoController::class, 'structuredData']);
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'generate']);
+Route::get('/seo/meta', [\App\Http\Controllers\SeoController::class, 'meta']);
+Route::get('/seo/structured-data', [\App\Http\Controllers\SeoController::class, 'structuredData']);
 
 // ========== PUBLIC SETTINGS ==========
 Route::get('/settings/public', [\App\Http\Controllers\Admin\SettingsController::class, 'public']);

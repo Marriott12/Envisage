@@ -64,6 +64,7 @@ Write-Host "  4. Run installation commands via SSH" -ForegroundColor White
 Write-Host ""
 Write-Host "Quick Summary:" -ForegroundColor Cyan
 Write-Host "  - Upload backend files to /home/youruser/envisage/" -ForegroundColor White
+
 Write-Host "  - Move public/ contents to public_html/" -ForegroundColor White  
 Write-Host "  - Update public_html/index.php paths" -ForegroundColor White
 Write-Host "  - Create database and update .env" -ForegroundColor White

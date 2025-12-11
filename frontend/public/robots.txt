@@ -1,0 +1,31 @@
+# Envisage Marketplace - Robots.txt
+# Generated on December 9, 2025
+
+# Allow all crawlers
+User-agent: *
+
+# Allow everything except admin and user areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /profile
+Disallow: /favorites
+Disallow: /seller-dashboard
+Disallow: /api/
+
+# Allow marketplace and public pages
+Allow: /
+Allow: /marketplace
+Allow: /login
+Allow: /register
+Allow: /about
+Allow: /contact
+Allow: /blog
+
+# Crawl-delay for polite crawlers
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml
