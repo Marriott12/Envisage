@@ -1,0 +1,225 @@
+/* RTL (Right-to-Left) language support */
+
+/* Base RTL styles */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="rtl"] body {
+  text-align: right;
+}
+
+/* Flip margins and padding */
+[dir="rtl"] .ml-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+
+[dir="rtl"] .pl-4 {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+[dir="rtl"] .pr-4 {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+/* Flip flex direction */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Flip text alignment */
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Flip border radius */
+[dir="rtl"] .rounded-l {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+[dir="rtl"] .rounded-r {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+/* Flip transforms */
+[dir="rtl"] .rotate-90 {
+  transform: rotate(-90deg);
+}
+
+[dir="rtl"] .rotate-180 {
+  transform: rotate(0deg);
+}
+
+[dir="rtl"] .scale-x-[-1] {
+  transform: scaleX(1);
+}
+
+/* Flip icons that represent direction */
+[dir="rtl"] .icon-arrow-right {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .icon-arrow-left {
+  transform: scaleX(-1);
+}
+
+/* Flip shadows */
+[dir="rtl"] .shadow-lg {
+  box-shadow: -0.625rem 0 1.25rem -0.313rem rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation adjustments */
+[dir="rtl"] .nav-item {
+  float: right;
+}
+
+/* Form elements */
+[dir="rtl"] input[type="tel"],
+[dir="rtl"] input[type="email"] {
+  direction: ltr;
+  text-align: right;
+}
+
+/* Checkbox and radio positioning */
+[dir="rtl"] input[type="checkbox"],
+[dir="rtl"] input[type="radio"] {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* List styles */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-right: 2rem;
+  padding-left: 0;
+}
+
+/* Drawer/modal positioning */
+[dir="rtl"] .drawer-left {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .drawer-right {
+  right: auto;
+  left: 0;
+}
+
+/* Tooltip positioning */
+[dir="rtl"] .tooltip-right {
+  left: auto;
+  right: 100%;
+  margin-right: 0.5rem;
+}
+
+[dir="rtl"] .tooltip-left {
+  right: auto;
+  left: 100%;
+  margin-left: 0.5rem;
+}
+
+/* Dropdown positioning */
+[dir="rtl"] .dropdown-left {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .dropdown-right {
+  right: auto;
+  left: 0;
+}
+
+/* Badge positioning */
+[dir="rtl"] .badge-top-right {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .badge-top-left {
+  left: auto;
+  right: 0;
+}
+
+/* Progress bar */
+[dir="rtl"] .progress-bar {
+  transform: scaleX(-1);
+}
+
+/* Timeline */
+[dir="rtl"] .timeline-item {
+  text-align: right;
+}
+
+[dir="rtl"] .timeline-item::before {
+  left: auto;
+  right: -0.5rem;
+}
+
+/* Breadcrumb separator */
+[dir="rtl"] .breadcrumb-item::after {
+  content: "‹";
+  transform: none;
+}
+
+/* Arabic-specific adjustments */
+[dir="rtl"][lang="ar"] {
+  font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+}
+
+[dir="rtl"][lang="ar"] .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+/* Ensure numbers stay LTR in RTL context */
+[dir="rtl"] .number,
+[dir="rtl"] .price,
+[dir="rtl"] .date {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Flip animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] .slide-in-right {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+[dir="rtl"] .slide-in-left {
+  animation: slideInRight 0.3s ease-out;
+}
