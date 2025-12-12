@@ -636,3 +636,370 @@ Route::prefix('subscriptions')->group(function () {
     // Webhook endpoint (no auth - verified by Stripe signature)
     Route::post('/webhook', [\App\Http\Controllers\Api\SubscriptionController::class, 'webhook']);
 });
+
+// ==================== MARKETING AUTOMATION ====================
+Route::prefix('marketing')->middleware('auth:sanctum')->group(function () {
+    
+    // Email Templates
+    Route::prefix('templates')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\EmailTemplateController::class, 'index']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\EmailTemplateController::class, 'show']);
+        Route::post('/', [\App\Http\Controllers\Api\EmailTemplateController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\EmailTemplateController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\EmailTemplateController::class, 'destroy']);
+        Route::post('/{id}/preview', [\App\Http\Controllers\Api\EmailTemplateController::class, 'preview']);
+        Route::post('/{id}/duplicate', [\App\Http\Controllers\Api\EmailTemplateController::class, 'duplicate']);
+    });
+    
+    // Campaigns
+    Route::prefix('campaigns')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\CampaignController::class, 'index']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\CampaignController::class, 'show']);
+        Route::post('/', [\App\Http\Controllers\Api\CampaignController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\CampaignController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\CampaignController::class, 'destroy']);
+        Route::post('/{id}/send', [\App\Http\Controllers\Api\CampaignController::class, 'send']);
+        Route::get('/{id}/analytics', [\App\Http\Controllers\Api\CampaignController::class, 'analytics']);
+    });
+    
+    // Campaign tracking (public - no auth)
+    Route::get('/track/open/{logId}', [\App\Http\Controllers\Api\CampaignController::class, 'trackOpen'])->withoutMiddleware('auth:sanctum');
+    Route::get('/track/click/{logId}', [\App\Http\Controllers\Api\CampaignController::class, 'trackClick'])->withoutMiddleware('auth:sanctum');
+    
+    // Automation Rules
+    Route::prefix('automation')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\AutomationController::class, 'index']);
+        Route::get('/stats', [\App\Http\Controllers\Api\AutomationController::class, 'stats']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\AutomationController::class, 'show']);
+        Route::post('/', [\App\Http\Controllers\Api\AutomationController::class, 'store']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\AutomationController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\AutomationController::class, 'destroy']);
+        Route::post('/{id}/toggle', [\App\Http\Controllers\Api\AutomationController::class, 'toggle']);
+        Route::get('/{id}/executions', [\App\Http\Controllers\Api\AutomationController::class, 'executions']);
+        Route::post('/{id}/trigger', [\App\Http\Controllers\Api\AutomationController::class, 'trigger']);
+    });
+});
+
+// ==================== ANALYTICS & REPORTING ====================
+Route::prefix('analytics')->middleware('auth:sanctum')->group(function () {
+    
+    // Event Tracking
+    Route::post('/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'trackEvent']);
+    Route::get('/overview', [\App\Http\Controllers\Api\AnalyticsController::class, 'overview']);
+    Route::get('/realtime', [\App\Http\Controllers\Api\AnalyticsController::class, 'realtime']);
+    Route::get('/timeline', [\App\Http\Controllers\Api\AnalyticsController::class, 'timeline']);
+    Route::get('/top-pages', [\App\Http\Controllers\Api\AnalyticsController::class, 'topPages']);
+    Route::get('/traffic-sources', [\App\Http\Controllers\Api\AnalyticsController::class, 'trafficSources']);
+    Route::get('/devices', [\App\Http\Controllers\Api\AnalyticsController::class, 'devices']);
+    Route::get('/geography', [\App\Http\Controllers\Api\AnalyticsController::class, 'geography']);
+    Route::get('/user-journey/{userId}', [\App\Http\Controllers\Api\AnalyticsController::class, 'userJourney']);
+});
+
+Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
+});
+
+Route::prefix('reports')->middleware('auth:sanctum')->group(function () {
+    Route::get('/sales', [\App\Http\Controllers\Api\ReportsController::class, 'sales']);
+    Route::get('/products', [\App\Http\Controllers\Api\ReportsController::class, 'productPerformance']);
+    Route::get('/customers', [\App\Http\Controllers\Api\ReportsController::class, 'customers']);
+    Route::get('/cohort-analysis', [\App\Http\Controllers\Api\ReportsController::class, 'cohortAnalysis']);
+    Route::get('/user-segments', [\App\Http\Controllers\Api\ReportsController::class, 'userSegments']);
+    Route::post('/export', [\App\Http\Controllers\Api\ReportsController::class, 'export']);
+});
+
+// ==================== AI RECOMMENDATION ENGINE ====================
+Route::prefix('recommendations')->group(function () {
+    
+    // Personalized Recommendations (requires auth for personalized, fallback to cold start)
+    Route::get('/for-you', [\App\Http\Controllers\RecommendationController::class, 'getPersonalized']);
+    
+    // Trending Products (public)
+    Route::get('/trending', [\App\Http\Controllers\RecommendationController::class, 'getTrending']);
+    Route::get('/trending/category/{categoryId}', [\App\Http\Controllers\RecommendationController::class, 'getTrendingByCategory']);
+    Route::get('/emerging-trends', [\App\Http\Controllers\RecommendationController::class, 'getEmergingTrends']);
+    
+    // Product-based Recommendations (public)
+    Route::get('/similar/{productId}', [\App\Http\Controllers\RecommendationController::class, 'getSimilar']);
+    Route::get('/frequently-bought/{productId}', [\App\Http\Controllers\RecommendationController::class, 'getFrequentlyBoughtTogether']);
+    
+    // Search-based Recommendations (requires auth)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/search-based', [\App\Http\Controllers\RecommendationController::class, 'getSearchRecommendations']);
+        Route::post('/track-interaction', [\App\Http\Controllers\RecommendationController::class, 'trackInteraction']);
+    });
+    
+    // Search Tracking (public for tracking, auth for history)
+    Route::post('/track-search', [\App\Http\Controllers\RecommendationController::class, 'trackSearch']);
+    Route::get('/popular-searches', [\App\Http\Controllers\RecommendationController::class, 'getPopularSearches']);
+    
+    // Performance Metrics (admin only)
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::get('/performance', [\App\Http\Controllers\RecommendationController::class, 'getPerformance']);
+        Route::get('/failed-searches', [\App\Http\Controllers\RecommendationController::class, 'getFailedSearches']);
+    });
+});
+
+// ==================== REFERRAL PROGRAM ====================
+Route::prefix('referrals')->group(function () {
+    
+    // Public endpoints
+    Route::get('/tiers', [\App\Http\Controllers\ReferralController::class, 'getTiers']);
+    Route::get('/leaderboard', [\App\Http\Controllers\ReferralController::class, 'getLeaderboard']);
+    Route::get('/validate/{code}', [\App\Http\Controllers\ReferralController::class, 'validateCode']);
+    Route::get('/track-click/{token}', [\App\Http\Controllers\ReferralController::class, 'trackClick']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\ReferralController::class, 'getDashboard']);
+        Route::get('/links', [\App\Http\Controllers\ReferralController::class, 'getLinks']);
+        Route::post('/links', [\App\Http\Controllers\ReferralController::class, 'generateLink']);
+        Route::patch('/links/{id}', [\App\Http\Controllers\ReferralController::class, 'updateLinkStatus']);
+        Route::post('/invite', [\App\Http\Controllers\ReferralController::class, 'sendInvitation']);
+        Route::get('/my-referrals', [\App\Http\Controllers\ReferralController::class, 'getReferrals']);
+        Route::get('/rewards', [\App\Http\Controllers\ReferralController::class, 'getRewards']);
+    });
+    
+    // Admin endpoints
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::get('/analytics', [\App\Http\Controllers\ReferralController::class, 'getAnalytics']);
+    });
+});
+
+// ========== DYNAMIC PRICING ROUTES (Phase 5) ==========
+Route::prefix('pricing')->group(function () {
+    
+    // Public endpoints
+    Route::get('/surge/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'getSurgePricing']);
+    
+    // Authenticated endpoints
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/recommend/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'getPriceRecommendation']);
+        Route::get('/history/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'getPriceHistory']);
+        Route::get('/competitors/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'getCompetitorPrices']);
+        Route::get('/forecast/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'getDemandForecast']);
+        Route::get('/check-surge/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'checkSurgeConditions']);
+    });
+    
+    // Admin endpoints
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        // Price management
+        Route::post('/apply', [\App\Http\Controllers\DynamicPricingController::class, 'applyPriceChange']);
+        Route::post('/bulk-optimize', [\App\Http\Controllers\DynamicPricingController::class, 'bulkOptimize']);
+        
+        // Rule management
+        Route::get('/rules', [\App\Http\Controllers\DynamicPricingController::class, 'getRules']);
+        Route::post('/rules', [\App\Http\Controllers\DynamicPricingController::class, 'createRule']);
+        Route::put('/rules/{id}', [\App\Http\Controllers\DynamicPricingController::class, 'updateRule']);
+        Route::delete('/rules/{id}', [\App\Http\Controllers\DynamicPricingController::class, 'deleteRule']);
+        
+        // Experiment management
+        Route::get('/experiments', [\App\Http\Controllers\DynamicPricingController::class, 'listExperiments']);
+        Route::post('/experiments', [\App\Http\Controllers\DynamicPricingController::class, 'startExperiment']);
+        Route::get('/experiments/{id}', [\App\Http\Controllers\DynamicPricingController::class, 'getExperimentResults']);
+        Route::post('/experiments/{id}/complete', [\App\Http\Controllers\DynamicPricingController::class, 'completeExperiment']);
+        
+        // Surge pricing management
+        Route::post('/surge', [\App\Http\Controllers\DynamicPricingController::class, 'activateSurgePricing']);
+        Route::delete('/surge/{productId}', [\App\Http\Controllers\DynamicPricingController::class, 'deactivateSurgePricing']);
+        
+        // Analytics
+        Route::get('/analytics', [\App\Http\Controllers\DynamicPricingController::class, 'getAnalytics']);
+    });
+});
+
+// ==================== FRAUD DETECTION ROUTES ====================
+Route::prefix('fraud')->group(function () {
+    // Public check
+    Route::post('/blacklist/check', [\App\Http\Controllers\Api\FraudDetectionController::class, 'checkBlacklist']);
+    
+    // Authenticated routes
+    Route::middleware('auth:sanctum')->group(function () {
+        // Get fraud score
+        Route::get('/score/{orderId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getScore']);
+        
+        // Velocity stats
+        Route::get('/velocity/{identifier}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getVelocityStats']);
+    });
+    
+    // Admin-only routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        // Analysis
+        Route::post('/analyze/{orderId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'analyzeOrder']);
+        Route::post('/reanalyze/{orderId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'reanalyze']);
+        Route::post('/bulk-analyze', [\App\Http\Controllers\Api\FraudDetectionController::class, 'bulkAnalyze']);
+        
+        // Review management
+        Route::get('/pending-reviews', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getPendingReviews']);
+        Route::post('/approve/{scoreId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'approve']);
+        Route::post('/reject/{scoreId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'reject']);
+        Route::post('/false-positive/{scoreId}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'markFalsePositive']);
+        
+        // Rule management
+        Route::get('/rules', [\App\Http\Controllers\Api\FraudDetectionController::class, 'listRules']);
+        Route::post('/rules', [\App\Http\Controllers\Api\FraudDetectionController::class, 'createRule']);
+        Route::put('/rules/{id}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'updateRule']);
+        Route::delete('/rules/{id}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'deleteRule']);
+        
+        // Blacklist management
+        Route::get('/blacklist', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getBlacklist']);
+        Route::post('/blacklist', [\App\Http\Controllers\Api\FraudDetectionController::class, 'addToBlacklist']);
+        Route::delete('/blacklist/{id}', [\App\Http\Controllers\Api\FraudDetectionController::class, 'removeFromBlacklist']);
+        
+        // Fraud attempts
+        Route::get('/attempts', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getAttempts']);
+        
+        // Analytics
+        Route::get('/analytics', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getAnalytics']);
+    });
+});
+
+// ==================== CUSTOMER SEGMENTATION ROUTES ====================
+Route::prefix('segmentation')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Customer profile
+    Route::get('/customer/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'getCustomerProfile']);
+    Route::post('/analyze/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'analyzeUser']);
+    
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\Api\SegmentationController::class, 'getAnalytics']);
+    
+    // RFM Analysis
+    Route::get('/rfm', [\App\Http\Controllers\Api\SegmentationController::class, 'getRfmScores']);
+    Route::get('/rfm/distribution', [\App\Http\Controllers\Api\SegmentationController::class, 'getRfmDistribution']);
+    Route::post('/rfm/calculate/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'calculateRfm']);
+    
+    // Churn Prediction
+    Route::get('/churn', [\App\Http\Controllers\Api\SegmentationController::class, 'getChurnPredictions']);
+    Route::post('/churn/predict/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'predictChurn']);
+    Route::post('/churn/trigger-interventions', [\App\Http\Controllers\Api\SegmentationController::class, 'triggerChurnInterventions']);
+    
+    // Customer Lifetime Value
+    Route::get('/clv', [\App\Http\Controllers\Api\SegmentationController::class, 'getClvData']);
+    Route::get('/clv/statistics', [\App\Http\Controllers\Api\SegmentationController::class, 'getClvStatistics']);
+    Route::post('/clv/calculate/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'calculateClv']);
+    
+    // Next Purchase Prediction
+    Route::get('/next-purchase', [\App\Http\Controllers\Api\SegmentationController::class, 'getNextPurchasePredictions']);
+    Route::post('/next-purchase/predict/{userId}', [\App\Http\Controllers\Api\SegmentationController::class, 'predictNextPurchase']);
+    Route::post('/next-purchase/send-notifications', [\App\Http\Controllers\Api\SegmentationController::class, 'sendNextPurchaseNotifications']);
+    
+    // Segments
+    Route::get('/segments', [\App\Http\Controllers\Api\SegmentationController::class, 'listSegments']);
+    Route::post('/segments', [\App\Http\Controllers\Api\SegmentationController::class, 'createSegment']);
+    Route::post('/segments/{id}/recalculate', [\App\Http\Controllers\Api\SegmentationController::class, 'recalculateSegment']);
+    Route::post('/segments/initialize-defaults', [\App\Http\Controllers\Api\SegmentationController::class, 'initializeDefaultSegments']);
+    
+    // Complete segmentation
+    Route::post('/run-complete', [\App\Http\Controllers\Api\SegmentationController::class, 'runCompleteSegmentation']);
+});
+
+// ==================== INVENTORY FORECASTING & AUTO-REORDERING ROUTES ====================
+Route::prefix('inventory')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Analytics & Health
+    Route::get('/analytics', [\App\Http\Controllers\InventoryController::class, 'getAnalytics']);
+    Route::get('/health-score', [\App\Http\Controllers\InventoryController::class, 'getHealthScore']);
+    
+    // Forecasting
+    Route::post('/forecasts/generate/{productId}', [\App\Http\Controllers\InventoryController::class, 'generateForecast']);
+    Route::get('/forecasts/{productId}', [\App\Http\Controllers\InventoryController::class, 'getForecasts']);
+    Route::get('/forecasts/accuracy-report', [\App\Http\Controllers\InventoryController::class, 'getForecastAccuracy']);
+    Route::post('/forecasts/generate-all', [\App\Http\Controllers\InventoryController::class, 'generateAllForecasts']);
+    
+    // Reorder Points
+    Route::get('/reorder-points', [\App\Http\Controllers\InventoryController::class, 'listReorderPoints']);
+    Route::get('/reorder-points/{id}', [\App\Http\Controllers\InventoryController::class, 'getReorderPoint']);
+    Route::post('/reorder-points', [\App\Http\Controllers\InventoryController::class, 'createReorderPoint']);
+    Route::post('/reorder-points/{id}/update-from-history', [\App\Http\Controllers\InventoryController::class, 'updateReorderPointFromHistory']);
+    Route::post('/reorder-points/{id}/update-from-forecast', [\App\Http\Controllers\InventoryController::class, 'updateReorderPointFromForecast']);
+    Route::post('/reorder-points/update-all', [\App\Http\Controllers\InventoryController::class, 'updateAllReorderPoints']);
+    Route::post('/reorder-points/check-needs', [\App\Http\Controllers\InventoryController::class, 'checkReorderNeeds']);
+    
+    // Stockout Prediction
+    Route::get('/stockout-risk/{productId}', [\App\Http\Controllers\InventoryController::class, 'getStockoutRisk']);
+    Route::get('/stockout-risks', [\App\Http\Controllers\InventoryController::class, 'getStockoutRisks']);
+    
+    // Purchase Orders
+    Route::get('/purchase-orders', [\App\Http\Controllers\InventoryController::class, 'listPurchaseOrders']);
+    Route::get('/purchase-orders/{id}', [\App\Http\Controllers\InventoryController::class, 'getPurchaseOrder']);
+    Route::post('/purchase-orders', [\App\Http\Controllers\InventoryController::class, 'createPurchaseOrder']);
+    Route::put('/purchase-orders/{id}/status', [\App\Http\Controllers\InventoryController::class, 'updatePurchaseOrderStatus']);
+    Route::post('/purchase-orders/{id}/receive', [\App\Http\Controllers\InventoryController::class, 'receivePurchaseOrder']);
+    Route::post('/purchase-orders/{id}/mark-received', [\App\Http\Controllers\InventoryController::class, 'markPurchaseOrderReceived']);
+    
+    // Suppliers
+    Route::get('/suppliers', [\App\Http\Controllers\InventoryController::class, 'listSuppliers']);
+    Route::get('/suppliers/{id}', [\App\Http\Controllers\InventoryController::class, 'getSupplier']);
+    Route::post('/suppliers', [\App\Http\Controllers\InventoryController::class, 'createSupplier']);
+    Route::put('/suppliers/{id}', [\App\Http\Controllers\InventoryController::class, 'updateSupplier']);
+    Route::get('/suppliers/recommend/{productId}', [\App\Http\Controllers\InventoryController::class, 'recommendSupplier']);
+    
+    // Supplier Performance
+    Route::get('/supplier-performance', [\App\Http\Controllers\InventoryController::class, 'listSupplierPerformance']);
+    Route::post('/supplier-performance/evaluate/{supplierId}', [\App\Http\Controllers\InventoryController::class, 'evaluateSupplier']);
+    Route::post('/supplier-performance/evaluate-all', [\App\Http\Controllers\InventoryController::class, 'evaluateAllSuppliers']);
+    
+    // Stock Alerts
+    Route::get('/alerts', [\App\Http\Controllers\InventoryController::class, 'listStockAlerts']);
+    Route::post('/alerts/{id}/resolve', [\App\Http\Controllers\InventoryController::class, 'resolveAlert']);
+    Route::post('/alerts/generate', [\App\Http\Controllers\InventoryController::class, 'generateAlerts']);
+    Route::post('/alerts/auto-resolve', [\App\Http\Controllers\InventoryController::class, 'autoResolveAlerts']);
+    
+    // Complete Optimization
+    Route::post('/optimize', [\App\Http\Controllers\InventoryController::class, 'runOptimization']);
+});
+
+// ==================== ADVANCED SEARCH (ELASTICSEARCH) ROUTES ====================
+// Public search routes
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'search']);
+Route::get('/search/autocomplete', [\App\Http\Controllers\SearchController::class, 'autocomplete']);
+Route::post('/search/log-click', [\App\Http\Controllers\SearchController::class, 'logClick']);
+Route::get('/search/popular', [\App\Http\Controllers\SearchController::class, 'getPopularSearches']);
+
+// Admin search management routes
+Route::prefix('search')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\SearchController::class, 'getAnalytics']);
+    Route::get('/no-results', [\App\Http\Controllers\SearchController::class, 'getNoResultSearches']);
+    
+    // Synonym Management
+    Route::get('/synonyms', [\App\Http\Controllers\SearchController::class, 'listSynonyms']);
+    Route::post('/synonyms', [\App\Http\Controllers\SearchController::class, 'createSynonym']);
+    Route::put('/synonyms/{id}', [\App\Http\Controllers\SearchController::class, 'updateSynonym']);
+    Route::delete('/synonyms/{id}', [\App\Http\Controllers\SearchController::class, 'deleteSynonym']);
+    Route::post('/synonyms/initialize', [\App\Http\Controllers\SearchController::class, 'initializeSynonyms']);
+    Route::get('/synonyms/statistics', [\App\Http\Controllers\SearchController::class, 'getSynonymStatistics']);
+    
+    // Elasticsearch Index Management
+    Route::post('/index/product/{productId}', [\App\Http\Controllers\SearchController::class, 'indexProduct']);
+    Route::post('/index/bulk', [\App\Http\Controllers\SearchController::class, 'bulkIndexProducts']);
+    Route::delete('/index/product/{productId}', [\App\Http\Controllers\SearchController::class, 'deleteProductFromIndex']);
+});
+
+// ==================== SOCIAL COMMERCE INTEGRATION ROUTES ====================
+Route::prefix('social-commerce')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Product Sync
+    Route::get('/products', [\App\Http\Controllers\SocialCommerceController::class, 'listProducts']);
+    Route::get('/products/{id}', [\App\Http\Controllers\SocialCommerceController::class, 'getProduct']);
+    Route::post('/products/sync', [\App\Http\Controllers\SocialCommerceController::class, 'syncProduct']);
+    Route::post('/products/bulk-sync', [\App\Http\Controllers\SocialCommerceController::class, 'bulkSyncProducts']);
+    Route::post('/products/{productId}/update-inventory', [\App\Http\Controllers\SocialCommerceController::class, 'updateInventory']);
+    Route::delete('/products/{productId}/platform/{platform}', [\App\Http\Controllers\SocialCommerceController::class, 'removeProduct']);
+    Route::get('/products/statistics', [\App\Http\Controllers\SocialCommerceController::class, 'getProductStatistics']);
+    
+    // Order Management
+    Route::get('/orders', [\App\Http\Controllers\SocialCommerceController::class, 'listOrders']);
+    Route::get('/orders/{id}', [\App\Http\Controllers\SocialCommerceController::class, 'getOrder']);
+    Route::post('/orders/import', [\App\Http\Controllers\SocialCommerceController::class, 'importOrders']);
+    Route::post('/orders/{id}/complete', [\App\Http\Controllers\SocialCommerceController::class, 'completeOrder']);
+    Route::get('/orders/statistics', [\App\Http\Controllers\SocialCommerceController::class, 'getOrderStatistics']);
+    
+    // Sync Logs
+    Route::get('/sync-logs', [\App\Http\Controllers\SocialCommerceController::class, 'listSyncLogs']);
+    Route::get('/sync-logs/{id}', [\App\Http\Controllers\SocialCommerceController::class, 'getSyncLog']);
+    Route::get('/sync-logs/statistics', [\App\Http\Controllers\SocialCommerceController::class, 'getSyncStatistics']);
+    Route::get('/sync-logs/is-due', [\App\Http\Controllers\SocialCommerceController::class, 'isSyncDue']);
+    
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\SocialCommerceController::class, 'getAnalytics']);
+    Route::get('/analytics/platform-comparison', [\App\Http\Controllers\SocialCommerceController::class, 'getPlatformComparison']);
+});

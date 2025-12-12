@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\RecommendationService;
+use App\Services\TrendingService;
+use App\Models\FrequentlyBoughtTogether;
+use App\Models\ProductSimilarity;
+use App\Models\TrendingProduct;
+use App\Models\RecommendationPerformance;
+use App\Models\SearchHistory;
 use App\Models\Product;
 use App\Models\ProductView;
 use App\Models\Order;
@@ -10,7 +17,294 @@ use Illuminate\Support\Facades\DB;
 
 class RecommendationController extends Controller
 {
-    // Track product view
+    protected $recommendationService;
+    protected $trendingService;
+
+    public function __construct(RecommendationService $recommendationService, TrendingService $trendingService)
+    {
+        $this->recommendationService = $recommendationService;
+        $this->trendingService = $trendingService;
+    }
+
+    /**
+     * Get personalized recommendations for authenticated user
+     */
+    public function getPersonalized(Request $request)
+    {
+        $user = $request->user();
+        $limit = $request->input('limit', 10);
+
+        if (!$user) {
+            // Cold start for guest users
+            $products = $this->recommendationService->getColdStartRecommendations($limit);
+            return response()->json([
+                'type' => 'cold_start',
+                'products' => $products,
+                'message' => 'Sign in for personalized recommendations'
+            ]);
+        }
+
+        $products = $this->recommendationService->getPersonalizedRecommendations($user->id, $limit);
+
+        // Track impression
+        RecommendationPerformance::trackImpression('for_you', 'hybrid');
+
+        return response()->json([
+            'type' => 'personalized',
+            'products' => $products,
+            'user_id' => $user->id
+        ]);
+    }
+
+    /**
+     * Get trending products
+     */
+    public function getTrending(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+        $hours = $request->input('hours', null);
+
+        if ($hours) {
+            // Real-time trending
+            $products = $this->trendingService->getRealTimeTrending($hours, $limit);
+            $type = 'realtime_trending';
+        } else {
+            // Daily trending
+            $products = TrendingProduct::getTrendingProducts($limit);
+            $type = 'trending';
+        }
+
+        // Track impression
+        RecommendationPerformance::trackImpression($type, 'trending_algorithm');
+
+        return response()->json([
+            'type' => $type,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Get similar products
+     */
+    public function getSimilar(Request $request, $productId)
+    {
+        $limit = $request->input('limit', 10);
+
+        $products = $this->recommendationService->getSimilarProducts($productId, $limit);
+
+        // Track impression
+        RecommendationPerformance::trackImpression('similar', 'collaborative');
+
+        return response()->json([
+            'type' => 'similar_products',
+            'base_product_id' => $productId,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Get frequently bought together
+     */
+    public function getFrequentlyBoughtTogether(Request $request, $productId)
+    {
+        $limit = $request->input('limit', 5);
+
+        $products = FrequentlyBoughtTogether::getFrequentlyBoughtWith($productId, $limit);
+
+        // Track impression
+        RecommendationPerformance::trackImpression('frequently_bought', 'association_rules');
+
+        return response()->json([
+            'type' => 'frequently_bought_together',
+            'base_product_id' => $productId,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Get trending by category
+     */
+    public function getTrendingByCategory(Request $request, $categoryId)
+    {
+        $limit = $request->input('limit', 10);
+
+        $products = $this->trendingService->getTrendingByCategory($categoryId, $limit);
+
+        return response()->json([
+            'type' => 'category_trending',
+            'category_id' => $categoryId,
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Get emerging trends
+     */
+    public function getEmergingTrends(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+
+        $products = $this->trendingService->getEmergingTrends($limit);
+
+        return response()->json([
+            'type' => 'emerging_trends',
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Track user interaction with product
+     */
+    public function trackInteraction(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'interaction_type' => 'required|in:view,cart,wishlist,purchase,rate',
+            'rating' => 'nullable|numeric|min:1|max:5',
+            'recommendation_type' => 'nullable|string',
+            'algorithm' => 'nullable|string',
+        ]);
+
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User must be authenticated'], 401);
+        }
+
+        // Track interaction
+        $this->recommendationService->trackInteraction(
+            $user->id,
+            $validated['product_id'],
+            $validated['interaction_type'],
+            $validated['rating'] ?? null
+        );
+
+        // Track click for recommendation performance
+        if (isset($validated['recommendation_type']) && isset($validated['algorithm'])) {
+            RecommendationPerformance::trackClick(
+                $validated['recommendation_type'],
+                $validated['algorithm']
+            );
+
+            // Track conversion if purchase
+            if ($validated['interaction_type'] == 'purchase') {
+                $product = Product::find($validated['product_id']);
+                $revenue = $product ? $product->price : 0;
+                
+                RecommendationPerformance::trackConversion(
+                    $validated['recommendation_type'],
+                    $validated['algorithm'],
+                    $revenue
+                );
+            }
+        }
+
+        return response()->json([
+            'message' => 'Interaction tracked successfully',
+            'type' => $validated['interaction_type']
+        ]);
+    }
+
+    /**
+     * Track search
+     */
+    public function trackSearch(Request $request)
+    {
+        $validated = $request->validate([
+            'query' => 'required|string|max:255',
+            'results_count' => 'required|integer|min:0',
+            'clicked_product_id' => 'nullable|exists:products,id',
+        ]);
+
+        $user = $request->user();
+        $userId = $user ? $user->id : null;
+        $sessionId = $request->session()->getId();
+
+        $search = SearchHistory::trackSearch(
+            $userId,
+            $sessionId,
+            $validated['query'],
+            $validated['results_count']
+        );
+
+        if (isset($validated['clicked_product_id'])) {
+            SearchHistory::trackClick($search->id, $validated['clicked_product_id']);
+        }
+
+        return response()->json([
+            'message' => 'Search tracked',
+            'search_id' => $search->id
+        ]);
+    }
+
+    /**
+     * Get search-based recommendations
+     */
+    public function getSearchRecommendations(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User must be authenticated'], 401);
+        }
+
+        $limit = $request->input('limit', 10);
+        $products = SearchHistory::getSearchBasedRecommendations($user->id, $limit);
+
+        return response()->json([
+            'type' => 'search_based',
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * Get recommendation performance metrics
+     */
+    public function getPerformance(Request $request)
+    {
+        $type = $request->input('type');
+        $days = $request->input('days', 30);
+
+        $performance = RecommendationPerformance::getPerformanceReport($type, $days);
+
+        return response()->json([
+            'period_days' => $days,
+            'performance' => $performance
+        ]);
+    }
+
+    /**
+     * Get popular searches
+     */
+    public function getPopularSearches(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+        $days = $request->input('days', 30);
+
+        $popularSearches = SearchHistory::getPopularSearches($limit, $days);
+
+        return response()->json([
+            'period_days' => $days,
+            'searches' => $popularSearches
+        ]);
+    }
+
+    /**
+     * Get failed searches (no results)
+     */
+    public function getFailedSearches(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+        $days = $request->input('days', 30);
+
+        $failedSearches = SearchHistory::getFailedSearches($limit, $days);
+
+        return response()->json([
+            'period_days' => $days,
+            'searches' => $failedSearches,
+            'message' => 'Consider adding products for these searches'
+        ]);
+    }
+
+    // Legacy method - Track product view
     public function trackView(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
@@ -164,27 +458,7 @@ class RecommendationController extends Controller
         ]);
     }
 
-    // Get "Trending Now" products
-    public function getTrending(Request $request)
-    {
-        $limit = $request->input('limit', 10);
-        $days = $request->input('days', 7);
-
-        $trending = Product::join('product_views', 'products.id', '=', 'product_views.product_id')
-            ->where('product_views.created_at', '>=', now()->subDays($days))
-            ->select('products.*', DB::raw('COUNT(product_views.id) as view_count'))
-            ->groupBy('products.id')
-            ->orderBy('view_count', 'desc')
-            ->limit($limit)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $trending,
-        ]);
-    }
-
-    // Get "New Arrivals" for user's preferred categories
+    // Legacy method: Get "New Arrivals" for user's preferred categories
     public function getNewArrivals(Request $request)
     {
         $limit = $request->input('limit', 10);
@@ -222,56 +496,5 @@ class RecommendationController extends Controller
             'success' => true,
             'data' => $newProducts,
         ]);
-    }
-
-    // Private helper: Get personalized recommendations
-    private function getPersonalizedRecommendations($userId, $limit)
-    {
-        // 1. Get user's purchase history categories
-        $purchasedCategories = Order::where('user_id', $userId)
-            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('products.category_id', DB::raw('COUNT(*) as purchase_count'))
-            ->groupBy('products.category_id')
-            ->orderBy('purchase_count', 'desc')
-            ->limit(3)
-            ->pluck('products.category_id');
-
-        // 2. Get recently viewed categories
-        $viewedCategories = ProductView::where('user_id', $userId)
-            ->join('products', 'product_views.product_id', '=', 'products.id')
-            ->select('products.category_id', DB::raw('COUNT(*) as view_count'))
-            ->groupBy('products.category_id')
-            ->orderBy('view_count', 'desc')
-            ->limit(3)
-            ->pluck('products.category_id');
-
-        $preferredCategories = $purchasedCategories->merge($viewedCategories)->unique();
-
-        // 3. Exclude already purchased and recently viewed
-        $excludedIds = ProductView::where('user_id', $userId)
-            ->where('created_at', '>=', now()->subDays(7))
-            ->pluck('product_id');
-
-        // 4. Get recommendations
-        $recommendations = Product::whereIn('category_id', $preferredCategories)
-            ->whereNotIn('id', $excludedIds)
-            ->orderBy('created_at', 'desc')
-            ->limit($limit)
-            ->get();
-
-        return $recommendations;
-    }
-
-    // Private helper: Get popular products
-    private function getPopularProducts($limit)
-    {
-        return Product::join('product_views', 'products.id', '=', 'product_views.product_id')
-            ->where('product_views.created_at', '>=', now()->subDays(30))
-            ->select('products.*', DB::raw('COUNT(product_views.id) as view_count'))
-            ->groupBy('products.id')
-            ->orderBy('view_count', 'desc')
-            ->limit($limit)
-            ->get();
     }
 }
