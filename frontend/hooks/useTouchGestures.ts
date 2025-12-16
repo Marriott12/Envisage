@@ -27,6 +27,8 @@ export function useSwipe(handlers: SwipeHandlers, options: SwipeOptions = {}) {
 
   const handleTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0];
+    if (!touch) return;
+    
     setTouchStart({
       x: touch.clientX,
       y: touch.clientY,
@@ -38,6 +40,8 @@ export function useSwipe(handlers: SwipeHandlers, options: SwipeOptions = {}) {
     if (!touchStart) return;
 
     const touch = e.changedTouches[0];
+    if (!touch) return;
+    
     const deltaX = touch.clientX - touchStart.x;
     const deltaY = touch.clientY - touchStart.y;
     const deltaTime = Date.now() - touchStart.time;
@@ -89,7 +93,8 @@ export function usePinchZoom(
   const initialDistance = useRef<number | null>(null);
   const currentScale = useRef(1);
 
-  const getDistance = (touches: TouchList) => {
+  const getDistance = (touches: React.TouchList) => {
+    if (touches.length < 2 || !touches[0] || !touches[1]) return 0;
     const dx = touches[0].clientX - touches[1].clientX;
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
@@ -181,6 +186,8 @@ export function useDrag(
 
   const handleTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0];
+    if (!touch) return;
+    
     startPos.current = { x: touch.clientX, y: touch.clientY };
     isDragging.current = true;
   };
@@ -189,6 +196,8 @@ export function useDrag(
     if (!isDragging.current || !startPos.current) return;
 
     const touch = e.touches[0];
+    if (!touch) return;
+    
     const deltaX = touch.clientX - startPos.current.x;
     const deltaY = touch.clientY - startPos.current.y;
 

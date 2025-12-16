@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShoppingBagIcon,
@@ -14,60 +14,90 @@ import { useAuth } from '../../hooks/useAuth';
 import Header from '../../components/Header';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import dynamic from 'next/dynamic';
+import api from '../../lib/api';
 
 const RolePermissionManager = dynamic(() => import('../../components/RolePermissionManager'), { ssr: false });
-const stats = [
-  { name: 'Total Orders', value: '12', icon: ShoppingBagIcon, change: '+2 this week' },
-  { name: 'Favorites', value: '24', icon: HeartIcon, change: '+4 new' },
-  { name: 'Profile Views', value: '89', icon: UserIcon, change: '+12 this month' },
-  { name: 'Messages', value: '3', icon: BellIcon, change: '2 unread' },
-];
+interface DashboardStats {
+  total_orders: number;
+  total_wishlist_items: number;
+  total_reviews: number;
+  unread_notifications: number;
+}
 
-const recentOrders = [
-  {
-    id: 1,
-    title: 'Wireless Headphones',
-    price: '$129.99',
-    status: 'Delivered',
-    date: '2024-01-15',
-    image: '/images/headphones.jpg'
-  },
-  {
-    id: 2,
-    title: 'Vintage Camera',
-    price: '$299.99',
-    status: 'In Transit',
-    date: '2024-01-12',
-    image: '/images/camera.jpg'
-  },
-  {
-    id: 3,
-    title: 'Gaming Keyboard',
-    price: '$89.99',
-    status: 'Processing',
-    date: '2024-01-10',
-    image: '/images/keyboard.jpg'
-  },
-];
+interface Order {
+  id: number;
+  order_number: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  items: Array<{
+    product: {
+      name: string;
+      images?: string[];
+    };
+  }>;
+}
 
 function DashboardContent() {
   const { user, logout } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const [statsRes, ordersRes] = await Promise.all([
+          api.get('/dashboard/stats').catch(() => ({ data: { 
+            total_orders: 0, 
+            total_wishlist_items: 0, 
+            total_reviews: 0, 
+            unread_notifications: 0 
+          }})),
+          api.get('/orders?limit=3').catch(() => ({ data: { data: [] }}))
+        ]);
+        
+        setStats(statsRes.data);
+        setRecentOrders(ordersRes.data.data || []);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user]);
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Delivered':
-        return 'bg-green-100 text-green-800';
-      case 'In Transit':
-        return 'bg-blue-100 text-blue-800';
-      case 'Processing':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+    const lowerStatus = status.toLowerCase();
+    if (lowerStatus.includes('delivered') || lowerStatus.includes('completed')) {
+      return 'bg-green-100 text-green-800';
     }
+    if (lowerStatus.includes('transit') || lowerStatus.includes('shipped')) {
+      return 'bg-blue-100 text-blue-800';
+    }
+    if (lowerStatus.includes('processing') || lowerStatus.includes('pending')) {
+      return 'bg-yellow-100 text-yellow-800';
+    }
+    if (lowerStatus.includes('cancel')) {
+      return 'bg-red-100 text-red-800';
+    }
+    return 'bg-gray-100 text-gray-800';
   };
 
+  const statsDisplay = [
+    { name: 'Total Orders', value: stats?.total_orders?.toString() || '0', icon: ShoppingBagIcon, change: 'All time' },
+    { name: 'Wishlist Items', value: stats?.total_wishlist_items?.toString() || '0', icon: HeartIcon, change: 'Saved items' },
+    { name: 'Reviews Given', value: stats?.total_reviews?.toString() || '0', icon: UserIcon, change: 'Your feedback' },
+    { name: 'Notifications', value: stats?.unread_notifications?.toString() || '0', icon: BellIcon, change: 'Unread' },
+  ];
+
   return (
-    <>
+    <div>
       <Header />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -95,30 +125,48 @@ function DashboardContent() {
                 <button 
                   onClick={logout}
                   className="btn-ghost"
-                >
-                  Logout
-                </button>
-              </div>
-            </motion.div>
-          </div>
-          {/* Role/Permission Management (Admin only) */}
-          <RolePermissionManager />
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                      <stat.icon className="h-6 w-6 text-primary-600" />
+             loading ? (
+              // Loading skeleton
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-2xl p-6 shadow-sm animate-pulse">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                    <div className="ml-4 flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+                      <div className="h-6 bg-gray-200 rounded w-12"></div>
                     </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              statsDisplay.map((stat, index) => (
+                <motion.div
+                  key={stat.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <stat.icon className="h-6 w-6 text-primary-600" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">{stat.name}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-xs text-gray-500">{stat.change}</p>
+                  </div>
+                </motion.div>
+              ))
+                   </div>
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">{stat.name}</p>
@@ -150,28 +198,60 @@ function DashboardContent() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-4">
-                    {recentOrders.map((order) => (
-                      <div key={order.id} className="flex items-center space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0">
-                          {/* Placeholder for order image */}
-                          <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                            <ShoppingBagIcon className="h-6 w-6 text-white" />
+                  {loading ? (
+                    // Loading skeleton
+                    <div className="space-y-4">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="flex items-center space-x-4 p-4 animate-pulse">
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-20"></div>
+                          </div>
+                          <div className="text-right">
+                            <div className="h-4 bg-gray-200 rounded w-16 mb-2 ml-auto"></div>
+                            <div className="h-5 bg-gray-200 rounded w-20"></div>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{order.title}</p>
-                          <p className="text-sm text-gray-600">{order.date}</p>
+                      ))}
+                    </div>
+                  ) : recentOrders.length > 0 ? (
+                    <div className="space-y-4">
+                      {recentOrders.map((order) => (
+                        <div key={order.id} className="flex items-center space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors">
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0">
+                            <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                              <ShoppingBagIcon className="h-6 w-6 text-white" />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 truncate">
+                              {order.items?.[0]?.product?.name || `Order #${order.order_number}`}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {new Date(order.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-gray-900">
+                              ${order.total_amount.toFixed(2)}
+                            </p>
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
+                              {order.status}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">{order.price}</p>
-                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <ShoppingBagIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500">No orders yet</p>
+                      <button className="mt-4 btn-primary">
+                        Start Shopping
+                      </button>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             </div>
@@ -243,7 +323,7 @@ function DashboardContent() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

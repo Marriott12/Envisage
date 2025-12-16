@@ -167,4 +167,33 @@ class DashboardController extends Controller
                 return ['start' => now()->subDays(30), 'end' => now()];
         }
     }
+
+    // Simple user stats for dashboard
+    public function stats(Request $request)
+    {
+        $userId = auth()->id();
+
+        try {
+            $stats = [
+                'total_orders' => Order::where('user_id', $userId)->count(),
+                'total_wishlist_items' => DB::table('wishlist_items')
+                    ->join('wishlists', 'wishlist_items.wishlist_id', '=', 'wishlists.id')
+                    ->where('wishlists.user_id', $userId)
+                    ->count(),
+                'total_reviews' => DB::table('product_reviews')
+                    ->where('user_id', $userId)
+                    ->count(),
+                'unread_notifications' => 0, // Placeholder
+            ];
+
+            return response()->json($stats);
+        } catch (\Exception $e) {
+            return response()->json([
+                'total_orders' => 0,
+                'total_wishlist_items' => 0,
+                'total_reviews' => 0,
+                'unread_notifications' => 0,
+            ]);
+        }
+    }
 }

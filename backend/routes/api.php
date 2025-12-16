@@ -24,7 +24,12 @@ use App\Http\Controllers\Api\SocialAuthController;
 
 // ==================== PUBLIC ROUTES ====================
 
-Route::get('/wishlists/shared/{token}', [\App\Http\Controllers\WishlistController::class, 'getShared']);
+// Product Reviews (Public)
+Route::get('/products/{productId}/reviews', [\App\Http\Controllers\API\ReviewController::class, 'index']);
+Route::get('/products/{productId}/reviews/statistics', [\App\Http\Controllers\API\ReviewController::class, 'statistics']);
+
+// Wishlist Sharing (Public)
+Route::get('/wishlists/shared/{token}', [\App\Http\Controllers\API\WishlistController::class, 'getShared']);
 
 // Checkout routes
 Route::post('/checkout/validate-promo-code', [\App\Http\Controllers\CheckoutController::class, 'validatePromoCode']);
@@ -102,6 +107,45 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::post('/checkout', [OrderController::class, 'checkout']); // Create order from cart
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel']); // Cancel order
     Route::get('/orders/statistics/overview', [OrderController::class, 'statistics']); // Get order statistics
+    
+    // ========== PRODUCT REVIEWS ==========
+    Route::get('/reviews/my-reviews', [\App\Http\Controllers\API\ReviewController::class, 'myReviews']);
+    Route::post('/products/{productId}/reviews', [\App\Http\Controllers\API\ReviewController::class, 'store']);
+    Route::put('/reviews/{reviewId}', [\App\Http\Controllers\API\ReviewController::class, 'update']);
+    Route::delete('/reviews/{reviewId}', [\App\Http\Controllers\API\ReviewController::class, 'destroy']);
+    Route::post('/reviews/{reviewId}/helpful', [\App\Http\Controllers\API\ReviewController::class, 'markHelpful']);
+    Route::post('/reviews/{reviewId}/response', [\App\Http\Controllers\API\ReviewController::class, 'addResponse']);
+    
+    // ========== WISHLISTS ==========
+    Route::get('/wishlists', [\App\Http\Controllers\API\WishlistController::class, 'index']);
+    Route::post('/wishlists', [\App\Http\Controllers\API\WishlistController::class, 'store']);
+    Route::get('/wishlists/{wishlistId}', [\App\Http\Controllers\API\WishlistController::class, 'show']);
+    Route::put('/wishlists/{wishlistId}', [\App\Http\Controllers\API\WishlistController::class, 'update']);
+    Route::delete('/wishlists/{wishlistId}', [\App\Http\Controllers\API\WishlistController::class, 'destroy']);
+    Route::post('/wishlists/{wishlistId}/items', [\App\Http\Controllers\API\WishlistController::class, 'addItem']);
+    Route::post('/wishlists/quick-add', [\App\Http\Controllers\API\WishlistController::class, 'quickAdd']);
+    Route::delete('/wishlists/{wishlistId}/items/{itemId}', [\App\Http\Controllers\API\WishlistController::class, 'removeItem']);
+    Route::put('/wishlists/{wishlistId}/items/{itemId}', [\App\Http\Controllers\API\WishlistController::class, 'updateItem']);
+    Route::post('/wishlists/{wishlistId}/share', [\App\Http\Controllers\API\WishlistController::class, 'share']);
+    Route::get('/products/{productId}/wishlist-check', [\App\Http\Controllers\API\WishlistController::class, 'checkProduct']);
+    
+    // ========== RECENTLY VIEWED ==========
+    Route::get('/recently-viewed', [\App\Http\Controllers\API\RecentlyViewedController::class, 'index']);
+    Route::post('/products/{productId}/track-view', [\App\Http\Controllers\API\RecentlyViewedController::class, 'track']);
+    Route::delete('/recently-viewed', [\App\Http\Controllers\API\RecentlyViewedController::class, 'clear']);
+    
+    // ========== EXPRESS CHECKOUT ==========
+    Route::get('/express-checkout/preferences', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'getPreferences']);
+    Route::put('/express-checkout/preferences', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'updatePreferences']);
+    Route::get('/express-checkout/payment-methods', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'getPaymentMethods']);
+    Route::post('/express-checkout/payment-methods', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'addPaymentMethod']);
+    Route::delete('/express-checkout/payment-methods/{methodId}', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'deletePaymentMethod']);
+    Route::post('/express-checkout/payment-methods/{methodId}/set-default', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'setDefaultPaymentMethod']);
+    Route::get('/express-checkout/addresses', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'getAddresses']);
+    Route::post('/express-checkout/addresses', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'addAddress']);
+    Route::put('/express-checkout/addresses/{addressId}', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'updateAddress']);
+    Route::delete('/express-checkout/addresses/{addressId}', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'deleteAddress']);
+    Route::post('/express-checkout', [\App\Http\Controllers\API\ExpressCheckoutController::class, 'expressCheckout']);
     
     // ========== SELLER/ADMIN ROUTES - PRODUCTS ==========
     Route::middleware('role:admin,seller')->group(function () {
@@ -697,6 +741,7 @@ Route::prefix('analytics')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
+    Route::get('/stats', [\App\Http\Controllers\Api\DashboardController::class, 'stats']);
 });
 
 Route::prefix('reports')->middleware('auth:sanctum')->group(function () {
@@ -1002,4 +1047,41 @@ Route::prefix('social-commerce')->middleware(['auth:sanctum', 'role:admin'])->gr
     // Analytics
     Route::get('/analytics', [\App\Http\Controllers\SocialCommerceController::class, 'getAnalytics']);
     Route::get('/analytics/platform-comparison', [\App\Http\Controllers\SocialCommerceController::class, 'getPlatformComparison']);
+    
+    // ========== PHASE 2 FEATURES ==========
+    
+    // Stock Alerts
+    Route::post('/products/{productId}/stock-alert', [\App\Http\Controllers\API\StockAlertController::class, 'subscribe']);
+    Route::delete('/stock-alerts/{id}', [\App\Http\Controllers\API\StockAlertController::class, 'unsubscribe']);
+    Route::get('/stock-alerts', [\App\Http\Controllers\API\StockAlertController::class, 'myAlerts']);
+    Route::get('/products/{productId}/stock-alert/check', [\App\Http\Controllers\API\StockAlertController::class, 'checkAlert']);
+    
+    // Product Bundles
+    Route::get('/bundles', [\App\Http\Controllers\API\BundleController::class, 'index']);
+    Route::get('/bundles/{id}', [\App\Http\Controllers\API\BundleController::class, 'show']);
+    Route::get('/products/{productId}/frequently-bought-together', [\App\Http\Controllers\API\BundleController::class, 'frequentlyBoughtTogether']);
+    Route::post('/bundles', [\App\Http\Controllers\API\BundleController::class, 'store'])->middleware('role:seller,admin');
+    Route::delete('/bundles/{id}', [\App\Http\Controllers\API\BundleController::class, 'destroy'])->middleware('role:seller,admin');
+    
+    // Flash Sales
+    Route::get('/flash-sales/active', [\App\Http\Controllers\API\FlashSaleController::class, 'active']);
+    Route::get('/flash-sales/{id}', [\App\Http\Controllers\API\FlashSaleController::class, 'show']);
+    Route::get('/flash-sales/{flashSaleId}/products/{productId}/eligibility', [\App\Http\Controllers\API\FlashSaleController::class, 'checkEligibility']);
+    Route::get('/daily-deal', [\App\Http\Controllers\API\FlashSaleController::class, 'dailyDeal']);
+    
+    // Gift Cards
+    Route::get('/gift-cards/templates', [\App\Http\Controllers\API\GiftCardController::class, 'templates']);
+    Route::post('/gift-cards/purchase', [\App\Http\Controllers\API\GiftCardController::class, 'purchase']);
+    Route::post('/gift-cards/check-balance', [\App\Http\Controllers\API\GiftCardController::class, 'checkBalance']);
+    Route::get('/gift-cards/my-cards', [\App\Http\Controllers\API\GiftCardController::class, 'myGiftCards']);
+    Route::post('/gift-cards/redeem', [\App\Http\Controllers\API\GiftCardController::class, 'redeem']);
+    
+    // Auctions
+    Route::get('/auctions', [\App\Http\Controllers\API\AuctionController::class, 'index']);
+    Route::get('/auctions/{id}', [\App\Http\Controllers\API\AuctionController::class, 'show']);
+    Route::post('/auctions/{id}/bid', [\App\Http\Controllers\API\AuctionController::class, 'placeBid']);
+    Route::post('/auctions/{id}/auto-bid', [\App\Http\Controllers\API\AuctionController::class, 'setAutoBid']);
+    Route::post('/auctions/{id}/watch', [\App\Http\Controllers\API\AuctionController::class, 'watch']);
+    Route::delete('/auctions/{id}/watch', [\App\Http\Controllers\API\AuctionController::class, 'unwatch']);
+    Route::get('/auctions/my-bids', [\App\Http\Controllers\API\AuctionController::class, 'myBids']);
 });
