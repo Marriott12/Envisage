@@ -108,7 +108,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     try {
-      await api.post('/cart/add', {
+      await api.post('/cart', {
         product_id: productId,
         quantity
       });

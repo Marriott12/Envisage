@@ -73,5 +73,8 @@ class DatabaseSeeder extends Seeder
             'stock' => 30,
             'status' => 'active',
         ]);
+
+        // Seed BNPL plans
+        $this->call(BnplPlanSeeder::class);
     }
 }
