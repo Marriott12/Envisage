@@ -27,14 +27,22 @@ class Product extends Model
         'dimensions',
         'featured',
         'views',
-        'sold'
+        'sold',
+        'is_preorder',
+        'expected_ship_date',
+        'preorder_limit',
+        'charge_now'
     ];
 
     protected $casts = [
         'images' => 'array',
         'price' => 'decimal:2',
         'weight' => 'decimal:2',
-        'featured' => 'boolean'
+        'featured' => 'boolean',
+        'is_preorder' => 'boolean',
+        'expected_ship_date' => 'date',
+        'preorder_limit' => 'integer',
+        'charge_now' => 'boolean'
     ];
 
     protected $appends = ['primary_image_url', 'thumbnail_url', 'images_urls'];
@@ -85,6 +93,14 @@ class Product extends Model
     public function isFavoritedBy($userId)
     {
         return $this->favorites()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Get pre-orders for this product
+     */
+    public function preOrders()
+    {
+        return $this->hasMany(PreOrder::class);
     }
 
     /**

@@ -81,6 +81,14 @@ class ProductReview extends Model
     }
 
     /**
+     * Get the video reviews for this review.
+     */
+    public function videoReviews()
+    {
+        return $this->hasMany(VideoReview::class);
+    }
+
+    /**
      * Calculate helpful percentage
      */
     public function getHelpfulPercentageAttribute()

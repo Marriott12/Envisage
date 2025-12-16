@@ -139,4 +139,70 @@ class SearchController extends Controller
             'data' => $history,
         ]);
     }
+
+    /**
+     * Get available search filters
+     */
+    public function filters()
+    {
+        $categories = DB::table('categories')
+            ->select('id', 'name')
+            ->where('status', 'active')
+            ->get();
+
+        $priceRange = DB::table('products')
+            ->select(
+                DB::raw('MIN(price) as min_price'),
+                DB::raw('MAX(price) as max_price')
+            )
+            ->where('status', 'active')
+            ->first();
+
+        $brands = DB::table('products')
+            ->select('brand')
+            ->distinct()
+            ->where('status', 'active')
+            ->whereNotNull('brand')
+            ->orderBy('brand')
+            ->pluck('brand');
+
+        $conditions = ['new', 'used', 'refurbished'];
+
+        return response()->json([
+            'success' => true,
+            'filters' => [
+                'categories' => $categories,
+                'price_range' => [
+                    'min' => $priceRange->min_price ?? 0,
+                    'max' => $priceRange->max_price ?? 1000,
+                ],
+                'brands' => $brands,
+                'conditions' => $conditions,
+                'ratings' => [1, 2, 3, 4, 5],
+            ],
+        ]);
+    }
+
+    /**
+     * Track search query
+     */
+    public function track(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+
+        DB::table('search_history')->insert([
+            'user_id' => auth()->id(),
+            'query' => $request->query,
+            'results_count' => $request->results_count ?? 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Search tracked successfully',
+        ]);
+    }
 }

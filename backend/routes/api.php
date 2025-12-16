@@ -1084,4 +1084,28 @@ Route::prefix('social-commerce')->middleware(['auth:sanctum', 'role:admin'])->gr
     Route::post('/auctions/{id}/watch', [\App\Http\Controllers\API\AuctionController::class, 'watch']);
     Route::delete('/auctions/{id}/watch', [\App\Http\Controllers\API\AuctionController::class, 'unwatch']);
     Route::get('/auctions/my-bids', [\App\Http\Controllers\API\AuctionController::class, 'myBids']);
+    
+    // Buy Now Pay Later (BNPL)
+    Route::get('/bnpl/plans', [\App\Http\Controllers\API\BNPLController::class, 'getPlans']);
+    Route::post('/bnpl/orders', [\App\Http\Controllers\API\BNPLController::class, 'createOrder']);
+    Route::get('/bnpl/orders', [\App\Http\Controllers\API\BNPLController::class, 'getUserOrders']);
+    Route::get('/bnpl/orders/{id}', [\App\Http\Controllers\API\BNPLController::class, 'getOrderDetails']);
+    Route::post('/bnpl/orders/{id}/payment', [\App\Http\Controllers\API\BNPLController::class, 'makePayment']);
+    
+    // Pre-Orders
+    Route::post('/preorders', [\App\Http\Controllers\API\PreOrderController::class, 'store']);
+    Route::get('/preorders', [\App\Http\Controllers\API\PreOrderController::class, 'getUserPreOrders']);
+    Route::get('/preorders/{id}', [\App\Http\Controllers\API\PreOrderController::class, 'show']);
+    Route::post('/preorders/{id}/cancel', [\App\Http\Controllers\API\PreOrderController::class, 'cancel']);
+    Route::get('/products/{productId}/preorders', [\App\Http\Controllers\API\PreOrderController::class, 'getProductPreOrders']);
+    
+    // Video Reviews
+    Route::post('/video-reviews/upload', [\App\Http\Controllers\API\VideoReviewController::class, 'upload']);
+    Route::get('/video-reviews/{reviewId}', [\App\Http\Controllers\API\VideoReviewController::class, 'show']);
+    Route::delete('/video-reviews/{id}', [\App\Http\Controllers\API\VideoReviewController::class, 'destroy']);
+    
+    // Advanced Search
+    Route::get('/search/suggestions', [\App\Http\Controllers\API\SearchController::class, 'suggestions']);
+    Route::get('/search/filters', [\App\Http\Controllers\API\SearchController::class, 'filters']);
+    Route::post('/search/track', [\App\Http\Controllers\API\SearchController::class, 'track']);
 });
