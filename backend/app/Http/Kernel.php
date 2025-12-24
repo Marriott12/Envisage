@@ -65,5 +65,10 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\CheckRole::class,
         'ratelimit' => \App\Http\Middleware\RateLimitMiddleware::class,
+        
+        // AI Platform Middleware
+        'ai.ratelimit' => \App\Http\Middleware\AIRateLimiter::class,
+        'has.role' => \App\Http\Middleware\EnsureUserHasRole::class,
+        'has.permission' => \App\Http\Middleware\EnsureUserHasPermission::class,
     ];
 }

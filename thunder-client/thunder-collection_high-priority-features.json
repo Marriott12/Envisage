@@ -1,0 +1,427 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "High Priority Features API Tests",
+  "collectionId": "high-priority-features",
+  "dateExported": "2024-12-24",
+  "version": "1.0",
+  "folders": [
+    {
+      "id": "invoices-folder",
+      "name": "Invoice Generation",
+      "requests": []
+    },
+    {
+      "id": "taxes-folder",
+      "name": "Tax Calculation",
+      "requests": []
+    },
+    {
+      "id": "currencies-folder",
+      "name": "Multi-Currency",
+      "requests": []
+    },
+    {
+      "id": "import-export-folder",
+      "name": "Import/Export",
+      "requests": []
+    }
+  ],
+  "requests": [
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "currencies-folder",
+      "name": "1. List All Currencies",
+      "url": "{{base_url}}/api/currencies",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "currencies-folder",
+      "name": "2. Convert Currency",
+      "url": "{{base_url}}/api/currencies/convert",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"amount\": 100,\n  \"from\": \"USD\",\n  \"to\": \"EUR\"\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "currencies-folder",
+      "name": "3. Get Exchange Rates",
+      "url": "{{base_url}}/api/currencies/rates?from=USD&to=EUR,GBP,JPY",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "currencies-folder",
+      "name": "4. Set User Currency Preference",
+      "url": "{{base_url}}/api/currencies/user-preference",
+      "method": "PUT",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"currency\": \"EUR\"\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "taxes-folder",
+      "name": "1. Calculate Tax",
+      "url": "{{base_url}}/api/taxes/calculate",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"country\": \"US\",\n  \"state\": \"CA\",\n  \"city\": \"Los Angeles\",\n  \"items\": [\n    {\n      \"amount\": 100,\n      \"category_id\": 1,\n      \"is_digital\": false\n    }\n  ],\n  \"shipping\": 10\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "taxes-folder",
+      "name": "2. Get Tax Rates",
+      "url": "{{base_url}}/api/taxes/rates?country=US&state=CA&city=Los Angeles",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "taxes-folder",
+      "name": "3. Estimate Tax",
+      "url": "{{base_url}}/api/taxes/estimate",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"amount\": 100,\n  \"country\": \"US\",\n  \"state\": \"CA\"\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "taxes-folder",
+      "name": "4. Create Tax Rule (Admin)",
+      "url": "{{base_url}}/api/taxes/rules",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"California Sales Tax\",\n  \"country\": \"US\",\n  \"state\": \"CA\",\n  \"rate\": 7.25,\n  \"tax_type\": \"sales_tax\",\n  \"is_active\": true,\n  \"priority\": 1\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "1. List Invoices",
+      "url": "{{base_url}}/api/invoices",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "2. Generate Invoice from Order",
+      "url": "{{base_url}}/api/invoices/generate/1",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"notes\": \"Thank you for your business!\",\n  \"due_days\": 30\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "3. Download Invoice PDF",
+      "url": "{{base_url}}/api/invoices/1/download",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "4. Email Invoice",
+      "url": "{{base_url}}/api/invoices/1/email",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "5. Mark Invoice as Paid",
+      "url": "{{base_url}}/api/invoices/1/mark-paid",
+      "method": "PUT",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"payment_method\": \"card\",\n  \"payment_reference\": \"TXN12345\",\n  \"amount\": 150.00\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "invoices-folder",
+      "name": "6. Invoice Statistics",
+      "url": "{{base_url}}/api/invoices/stats",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "import-export-folder",
+      "name": "1. Download Product Import Template",
+      "url": "{{base_url}}/api/import/template?type=products",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "import-export-folder",
+      "name": "2. Validate Product Import",
+      "url": "{{base_url}}/api/import/validate",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "formData",
+        "formData": [
+          {
+            "name": "file",
+            "value": "",
+            "type": "file"
+          }
+        ]
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "import-export-folder",
+      "name": "3. Import Products",
+      "url": "{{base_url}}/api/import/products",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "formData",
+        "formData": [
+          {
+            "name": "file",
+            "value": "",
+            "type": "file"
+          },
+          {
+            "name": "update_existing",
+            "value": "true",
+            "type": "text"
+          }
+        ]
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "import-export-folder",
+      "name": "4. Export Products",
+      "url": "{{base_url}}/api/export/products",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"category_id\": null,\n  \"status\": \"active\"\n}"
+      }
+    },
+    {
+      "collectionId": "high-priority-features",
+      "folderId": "import-export-folder",
+      "name": "5. Export Orders",
+      "url": "{{base_url}}/api/export/orders",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-12-31\",\n  \"status\": \"delivered\"\n}"
+      }
+    }
+  ],
+  "environments": [
+    {
+      "name": "Local Development",
+      "variables": [
+        {
+          "name": "base_url",
+          "value": "http://localhost:8000"
+        },
+        {
+          "name": "token",
+          "value": "YOUR_AUTH_TOKEN_HERE"
+        }
+      ]
+    },
+    {
+      "name": "Production",
+      "variables": [
+        {
+          "name": "base_url",
+          "value": "https://your-domain.com"
+        },
+        {
+          "name": "token",
+          "value": "YOUR_PRODUCTION_TOKEN_HERE"
+        }
+      ]
+    }
+  ]
+}

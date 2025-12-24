@@ -48,6 +48,14 @@ Route::get('/products/{productId}/also-bought', [\App\Http\Controllers\Recommend
 Route::get('/products/{productId}/similar', [\App\Http\Controllers\RecommendationController::class, 'getSimilarProducts']);
 Route::middleware('auth:sanctum')->get('/recommendations/history-based', [\App\Http\Controllers\RecommendationController::class, 'getHistoryBased']);
 
+// Advanced AI Recommendations
+Route::get('/recommendations/neural', [\App\Http\Controllers\RecommendationController::class, 'neural']);
+Route::get('/recommendations/bandit', [\App\Http\Controllers\RecommendationController::class, 'bandit']);
+Route::post('/recommendations/session', [\App\Http\Controllers\RecommendationController::class, 'session']);
+Route::get('/recommendations/context-aware', [\App\Http\Controllers\RecommendationController::class, 'contextAware']);
+Route::get('/recommendations/experiment', [\App\Http\Controllers\RecommendationController::class, 'withExperiment']);
+Route::middleware('auth:sanctum')->post('/recommendations/feedback', [\App\Http\Controllers\RecommendationController::class, 'updateFeedback']);
+
 // Health check
 Route::get('/test', function() {
     return response()->json(['message' => 'API is working', 'version' => '1.0']);
@@ -1108,4 +1116,98 @@ Route::prefix('social-commerce')->middleware(['auth:sanctum', 'role:admin'])->gr
     Route::get('/search/suggestions', [\App\Http\Controllers\API\SearchController::class, 'suggestions']);
     Route::get('/search/filters', [\App\Http\Controllers\API\SearchController::class, 'filters']);
     Route::post('/search/track', [\App\Http\Controllers\API\SearchController::class, 'track']);
+    
+    // Invoices
+    Route::get('/invoices', [\App\Http\Controllers\API\InvoiceController::class, 'index']);
+    Route::get('/invoices/stats', [\App\Http\Controllers\API\InvoiceController::class, 'stats']);
+    Route::get('/invoices/{id}', [\App\Http\Controllers\API\InvoiceController::class, 'show']);
+    Route::post('/invoices/generate/{orderId}', [\App\Http\Controllers\API\InvoiceController::class, 'generate']);
+    Route::get('/invoices/{id}/download', [\App\Http\Controllers\API\InvoiceController::class, 'download']);
+    Route::post('/invoices/{id}/email', [\App\Http\Controllers\API\InvoiceController::class, 'email']);
+    Route::get('/invoices/order/{orderId}', [\App\Http\Controllers\API\InvoiceController::class, 'getByOrder']);
+    Route::post('/invoices/bulk-generate', [\App\Http\Controllers\API\InvoiceController::class, 'bulkGenerate']);
+    Route::put('/invoices/{id}/mark-paid', [\App\Http\Controllers\API\InvoiceController::class, 'markPaid']);
+    Route::put('/invoices/{id}/cancel', [\App\Http\Controllers\API\InvoiceController::class, 'cancel']);
+    
+    // Taxes
+    Route::post('/taxes/calculate', [\App\Http\Controllers\API\TaxController::class, 'calculate']);
+    Route::get('/taxes/rates', [\App\Http\Controllers\API\TaxController::class, 'getRates']);
+    Route::post('/taxes/estimate', [\App\Http\Controllers\API\TaxController::class, 'estimate']);
+    Route::get('/taxes/exemptions', [\App\Http\Controllers\API\TaxController::class, 'getExemptions']);
+    Route::post('/taxes/validate-id', [\App\Http\Controllers\API\TaxController::class, 'validateTaxId']);
+    
+    // Currencies
+    Route::get('/currencies', [\App\Http\Controllers\API\CurrencyController::class, 'index']);
+    Route::post('/currencies/convert', [\App\Http\Controllers\API\CurrencyController::class, 'convert']);
+    Route::get('/currencies/rates', [\App\Http\Controllers\API\CurrencyController::class, 'getRates']);
+    Route::get('/currencies/user-preference', [\App\Http\Controllers\API\CurrencyController::class, 'getUserPreference']);
+    Route::put('/currencies/user-preference', [\App\Http\Controllers\API\CurrencyController::class, 'setUserPreference']);
+    Route::post('/currencies/format', [\App\Http\Controllers\API\CurrencyController::class, 'formatAmount']);
+    
+    // Import/Export
+    Route::get('/import/template', [\App\Http\Controllers\API\ProductImportExportController::class, 'downloadTemplate']);
+    Route::post('/import/validate', [\App\Http\Controllers\API\ProductImportExportController::class, 'validateImport']);
+    Route::post('/import/products', [\App\Http\Controllers\API\ProductImportExportController::class, 'importProducts']);
+    Route::get('/import/status/{id}', [\App\Http\Controllers\API\ProductImportExportController::class, 'getStatus']);
+    Route::post('/export/products', [\App\Http\Controllers\API\ProductImportExportController::class, 'exportProducts']);
+    Route::post('/export/orders', [\App\Http\Controllers\API\ProductImportExportController::class, 'exportOrders']);
+    Route::post('/export/customers', [\App\Http\Controllers\API\ProductImportExportController::class, 'exportCustomers']);
+    
+    // ==================== ADVANCED AI FEATURES ====================
+    
+    // Visual Search (Image-based product discovery)
+    Route::post('/ai/visual-search', [\App\Http\Controllers\VisualSearchController::class, 'searchByImage']);
+    Route::post('/ai/detect-colors', [\App\Http\Controllers\VisualSearchController::class, 'detectColors']);
+    Route::post('/ai/detect-objects', [\App\Http\Controllers\VisualSearchController::class, 'detectObjects']);
+    Route::post('/ai/style-recommendations', [\App\Http\Controllers\VisualSearchController::class, 'styleRecommendations']);
+    
+    // NLP & Chatbot (Natural language processing)
+    Route::post('/ai/chat', [\App\Http\Controllers\ChatController::class, 'chat']);
+    Route::post('/ai/semantic-search', [\App\Http\Controllers\ChatController::class, 'semanticSearch']);
+    Route::post('/ai/extract-intent', [\App\Http\Controllers\ChatController::class, 'extractIntent']);
+    Route::post('/ai/autocomplete', [\App\Http\Controllers\ChatController::class, 'autocomplete']);
+    Route::post('/ai/sentiment', [\App\Http\Controllers\ChatController::class, 'sentiment']);
+    
+    // Fraud Detection (Transaction monitoring)
+    Route::post('/ai/fraud/check', [\App\Http\Controllers\FraudController::class, 'check']);
+    Route::get('/ai/fraud/alerts', [\App\Http\Controllers\FraudController::class, 'alerts']);
+    Route::post('/ai/fraud/alerts/{alertId}/review', [\App\Http\Controllers\FraudController::class, 'review']);
+    Route::get('/ai/fraud/statistics', [\App\Http\Controllers\FraudController::class, 'statistics']);
+    
+    // Predictive Analytics (Forecasting & insights)
+    Route::get('/ai/predict/demand/{productId}', [\App\Http\Controllers\PredictiveController::class, 'forecastDemand']);
+    Route::post('/ai/predict/churn', [\App\Http\Controllers\PredictiveController::class, 'predictChurn']);
+    Route::post('/ai/predict/clv', [\App\Http\Controllers\PredictiveController::class, 'predictCLV']);
+    Route::get('/ai/predict/sales', [\App\Http\Controllers\PredictiveController::class, 'forecastSales']);
+    Route::get('/ai/predict/trending', [\App\Http\Controllers\PredictiveController::class, 'trendingProducts']);
+    Route::post('/ai/predict/next-purchase', [\App\Http\Controllers\PredictiveController::class, 'predictNextPurchase']);
+    Route::get('/ai/predict/insights', [\App\Http\Controllers\PredictiveController::class, 'insights']);
+    Route::post('/ai/predict/optimize-inventory', [\App\Http\Controllers\PredictiveController::class, 'optimizeInventory']);
+    
+    // Sentiment Analysis (Review intelligence)
+    Route::post('/ai/sentiment/analyze', [\App\Http\Controllers\SentimentController::class, 'analyze']);
+    Route::post('/ai/sentiment/aspect-based', [\App\Http\Controllers\SentimentController::class, 'aspectBased']);
+    Route::post('/ai/sentiment/detect-fake', [\App\Http\Controllers\SentimentController::class, 'detectFake']);
+    Route::post('/ai/sentiment/detect-emotions', [\App\Http\Controllers\SentimentController::class, 'detectEmotions']);
+    Route::get('/ai/sentiment/summarize/{productId}', [\App\Http\Controllers\SentimentController::class, 'summarize']);
+    Route::post('/ai/sentiment/suggest-response', [\App\Http\Controllers\SentimentController::class, 'suggestResponse']);
+    Route::post('/ai/sentiment/batch-analyze/{productId}', [\App\Http\Controllers\SentimentController::class, 'batchAnalyze']);
+    
+    // AI Content Generation (GPT-4 powered)
+    Route::post('/ai/content/description', [\App\Http\Controllers\AIContentController::class, 'generateDescription']);
+    Route::post('/ai/content/seo', [\App\Http\Controllers\AIContentController::class, 'generateSEO']);
+    Route::post('/ai/content/email', [\App\Http\Controllers\AIContentController::class, 'generateEmail']);
+    Route::post('/ai/content/marketing', [\App\Http\Controllers\AIContentController::class, 'generateMarketingCopy']);
+    Route::post('/ai/content/blog', [\App\Http\Controllers\AIContentController::class, 'generateBlog']);
+    Route::post('/ai/content/social', [\App\Http\Controllers\AIContentController::class, 'generateSocial']);
+    Route::post('/ai/content/faq', [\App\Http\Controllers\AIContentController::class, 'generateFAQ']);
+    Route::post('/ai/content/comparison', [\App\Http\Controllers\AIContentController::class, 'generateComparison']);
+});
+
+// ==================== ADMIN ROUTES (Advanced AI Management) ====================
+
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/ai')->group(function () {
+    // Visual Search Management
+    Route::post('/visual-search/index/{productId}', [\App\Http\Controllers\VisualSearchController::class, 'indexProductImage']);
+    Route::post('/visual-search/batch-index', [\App\Http\Controllers\VisualSearchController::class, 'batchIndex']);
 });

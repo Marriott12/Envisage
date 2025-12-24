@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\RecommendationService;
 use App\Services\TrendingService;
+use App\Services\AdvancedRecommendationService;
 use App\Models\FrequentlyBoughtTogether;
 use App\Models\ProductSimilarity;
 use App\Models\TrendingProduct;
@@ -19,11 +20,16 @@ class RecommendationController extends Controller
 {
     protected $recommendationService;
     protected $trendingService;
+    protected $advancedRecommendationService;
 
-    public function __construct(RecommendationService $recommendationService, TrendingService $trendingService)
-    {
+    public function __construct(
+        RecommendationService $recommendationService, 
+        TrendingService $trendingService,
+        AdvancedRecommendationService $advancedRecommendationService
+    ) {
         $this->recommendationService = $recommendationService;
         $this->trendingService = $trendingService;
+        $this->advancedRecommendationService = $advancedRecommendationService;
     }
 
     /**
@@ -495,6 +501,118 @@ class RecommendationController extends Controller
         return response()->json([
             'success' => true,
             'data' => $newProducts,
+        ]);
+    }
+
+    // ==================== ADVANCED AI RECOMMENDATION METHODS ====================
+
+    /**
+     * Get neural collaborative filtering recommendations
+     */
+    public function neural(Request $request)
+    {
+        $userId = $request->user()->id ?? null;
+        $limit = $request->input('limit', 20);
+        $context = $request->input('context', []);
+
+        $recommendations = $this->advancedRecommendationService->getNeuralRecommendations($userId, $limit, $context);
+
+        return response()->json([
+            'success' => true,
+            'data' => $recommendations,
+            'algorithm' => 'neural_collaborative_filtering',
+        ]);
+    }
+
+    /**
+     * Get multi-armed bandit recommendations
+     */
+    public function bandit(Request $request)
+    {
+        $userId = $request->user()->id ?? null;
+        $limit = $request->input('limit', 20);
+
+        $recommendations = $this->advancedRecommendationService->getBanditRecommendations($userId, $limit);
+
+        return response()->json([
+            'success' => true,
+            'data' => $recommendations,
+            'algorithm' => 'thompson_sampling',
+        ]);
+    }
+
+    /**
+     * Get session-based recommendations (GRU4Rec)
+     */
+    public function session(Request $request)
+    {
+        $sessionId = $request->input('session_id', session()->getId());
+        $viewedProducts = $request->input('viewed_products', []);
+        $limit = $request->input('limit', 10);
+
+        $recommendations = $this->advancedRecommendationService->getSessionBasedRecommendations($sessionId, $viewedProducts, $limit);
+
+        return response()->json([
+            'success' => true,
+            'data' => $recommendations,
+            'algorithm' => 'gru4rec',
+        ]);
+    }
+
+    /**
+     * Get context-aware recommendations
+     */
+    public function contextAware(Request $request)
+    {
+        $userId = $request->user()->id ?? null;
+        $limit = $request->input('limit', 20);
+
+        $recommendations = $this->advancedRecommendationService->getContextAwareRecommendations($userId, $limit);
+
+        return response()->json([
+            'success' => true,
+            'data' => $recommendations,
+            'algorithm' => 'context_aware',
+        ]);
+    }
+
+    /**
+     * Get recommendations with A/B testing
+     */
+    public function withExperiment(Request $request)
+    {
+        $userId = $request->user()->id ?? null;
+        $limit = $request->input('limit', 20);
+
+        $recommendations = $this->advancedRecommendationService->getRecommendationsWithExperiment($userId, $limit);
+
+        return response()->json([
+            'success' => true,
+            'data' => $recommendations,
+        ]);
+    }
+
+    /**
+     * Update recommendations with user feedback
+     */
+    public function updateFeedback(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'action' => 'required|in:click,view,purchase,wishlist,rate',
+            'context' => 'array',
+        ]);
+
+        $userId = $request->user()->id;
+        $productId = $request->input('product_id');
+        $action = $request->input('action');
+        $context = $request->input('context', []);
+
+        $this->advancedRecommendationService->updateWithFeedback($userId, $productId, $action, $context);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Feedback recorded successfully',
         ]);
     }
 }
