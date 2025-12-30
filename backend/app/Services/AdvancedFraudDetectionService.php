@@ -36,6 +36,14 @@ class AdvancedFraudDetectionService
     }
 
     /**
+     * Analyze transaction for fraud (alias for checkTransaction)
+     */
+    public function analyzeTransaction($transactionData)
+    {
+        return $this->checkTransaction($transactionData);
+    }
+
+    /**
      * Comprehensive fraud check using ensemble models
      */
     public function checkTransaction($transactionData)

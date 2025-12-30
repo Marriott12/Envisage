@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\SecurityHeaders::class,
     ];
 
     /**
@@ -70,5 +71,9 @@ class Kernel extends HttpKernel
         'ai.ratelimit' => \App\Http\Middleware\AIRateLimiter::class,
         'has.role' => \App\Http\Middleware\EnsureUserHasRole::class,
         'has.permission' => \App\Http\Middleware\EnsureUserHasPermission::class,
+        
+        // Production Enhancement Middleware
+        'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+        'api.key' => \App\Http\Middleware\ApiKeyAuth::class,
     ];
 }
